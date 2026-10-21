@@ -658,6 +658,7 @@ function evaluateDegenSniperPipeline(token) {
   // =========================================================================
   let verdict = '🟡 TRENCH WATCH';
   let verdictCode = 'WATCH';
+  let strategyMode = isDipAbsorption ? 'REVERSAL' : 'BREAKOUT';
   let primaryReason = signals[0] || 'In osservazione trench';
 
   if (rejectionReasons.length > 0) {
@@ -672,8 +673,6 @@ function evaluateDegenSniperPipeline(token) {
     verdictCode = 'WATCH';
     primaryReason = 'Audit di sicurezza RugCheck in corso / non ancora completato';
   } else {
-    let strategyMode = 'BREAKOUT';
-
     if (isDipAbsorption) {
       score = Math.max(88, Math.min(99, Math.round(score + 22)));
       strategyMode = 'REVERSAL';
