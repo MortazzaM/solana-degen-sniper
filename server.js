@@ -404,23 +404,47 @@ function evaluateDegenSniperPipeline(token) {
     rejectionReasons.push(`Authority attiva (${token.security.freezeAuthority ? 'Freeze' : 'Mint'}) — Rischio blocco vendite / Honeypot`);
   }
 
+  // 7) Hard Gatekeeper RugCheck Danger & Dev Rug History (Tolleranza Zero Scam):
+  // Se RugCheck rileva anche UN SOLO rischio di livello "danger", o score >= 1000, o precedenti rug del creator: SCARTO IMMEDIATO!
+  if (token.security) {
+    if (token.security.dangerRisks && token.security.dangerRisks.length > 0) {
+      const dangerNames = token.security.dangerRisks.map(r => r.name || r.description).slice(0, 3).join(', ');
+      rejectionReasons.push(`RugCheck DANGER (${token.security.dangerRisks.length} rischi critici: ${dangerNames}) — Token Scam / Malevolo`);
+    }
+    if (token.security.hasCreatorRugHistory) {
+      rejectionReasons.push(`Dev Rug History — Il creator ha precedenti di token ruggati in passato`);
+    }
+    const rScore = token.security.rawScore || token.security.scoreNormalised || 0;
+    if (rScore >= 1000) {
+      rejectionReasons.push(`RugCheck Danger Score eccessivo (${rScore} >= 1000) — Rischio truffa conclamato`);
+    }
+  }
+
+  // 8) Filtri Avanzati Jupiter Ultra / Datapi (Anti-Bot Swarm & Anti-Wash Trading):
+  if (token.onchain) {
+    if (token.onchain.botHoldersPct > 35) {
+      rejectionReasons.push(`Presenza Bot/Sniper insostenibile (${token.onchain.botHoldersPct}% > 35%) — Pool controllata da bot`);
+    }
+    if (token.onchain.iconReused) {
+      rejectionReasons.push(`Icona riciclata / Clone sospetto (Icon Reused) — Rischio replica scam`);
+    }
+    if (ageMinutes >= 6 && token.onchain.organicScore > 0 && token.onchain.organicScore < 30) {
+      rejectionReasons.push(`Jupiter Organic Score critico (${token.onchain.organicScore} < 30) — Volume artificiale / Wash trading`);
+    }
+  }
+
   // =========================================================================
   // SEGNALI DI ALLERTA (WARNINGS) — NON BLOCCANO IL SEGNALE MA INFORMANO IL DEGEN
   // =========================================================================
   const sec = token.security;
   if (sec) {
-    if (sec.dangerRisks && sec.dangerRisks.length > 0) {
-      warnings.push(`⚠️ RugCheck Danger: ${sec.dangerRisks.map(r => r.name).slice(0, 2).join(', ')}`);
-    }
-    if (sec.freezeAuthority) warnings.push('⚠️ Freeze Authority attiva');
-    if (sec.mintAuthority) warnings.push('⚠️ Mint Authority attiva');
-    if (sec.top10EoaPct > 25) warnings.push(`⚠️ Top 10 Holders moderata concentrazione (${sec.top10EoaPct}%)`);
+    if (sec.top10EoaPct > 22) warnings.push(`⚠️ Top 10 Holders moderata concentrazione (${sec.top10EoaPct}%)`);
   }
 
   const oc = token.onchain;
   if (oc) {
-    if (oc.botHoldersPct > 30) warnings.push(`⚠️ Presenza Bot/Sniper elevata (${oc.botHoldersPct}%)`);
-    if (oc.bundlerHoldingAthPct > 30) warnings.push(`⚠️ Bundlers hanno controllato ${oc.bundlerHoldingAthPct}% all'ATH`);
+    if (oc.botHoldersPct > 25 && oc.botHoldersPct <= 35) warnings.push(`⚠️ Presenza Bot/Sniper attiva (${oc.botHoldersPct}%)`);
+    if (oc.bundlerHoldingAthPct > 20 && oc.bundlerHoldingAthPct <= 28) warnings.push(`⚠️ Bundlers hanno controllato ${oc.bundlerHoldingAthPct}% all'ATH`);
   }
 
   // =========================================================================
@@ -533,6 +557,12 @@ function evaluateDegenSniperPipeline(token) {
     verdict = '❌ SCARTATA';
     verdictCode = 'REJECTED';
     primaryReason = rejectionReasons[0];
+  } else if (!token.security) {
+    // Hard Gatekeeper RugCheck Obbligatorio:
+    // Nessun token può ricevere lo status di ENTRY o SCALP senza un audit di sicurezza RugCheck eseguito con successo
+    verdict = '🟡 IN ATTESA AUDIT';
+    verdictCode = 'WATCH';
+    primaryReason = 'Audit di sicurezza RugCheck in corso / non ancora completato';
   } else {
     score = Math.max(30, Math.min(99, Math.round(score)));
 
@@ -590,6 +620,32 @@ const evaluateFourPhasePipeline = evaluateDegenSniperPipeline;
 function recordPaperSignal(token, isManual = false) {
   if (!token || !token.mint || !token.priceUsd || token.priceUsd <= 0) return null;
   if (paperSignals.has(token.mint)) return paperSignals.get(token.mint);
+
+  // Gatekeeper Assoluto Pre-Trade:
+  // Se non è un'apertura manuale, rifiutiamo categoricamente token privi di audit RugCheck o con qualsiasi flag Danger / Rug
+  if (!isManual) {
+    if (!token.security) {
+      console.warn(`[PAPER GATEKEEPER] Rifiutato ${token.symbol || token.mint}: Nessun audit RugCheck presente.`);
+      return null;
+    }
+    if (token.security.dangerRisks && token.security.dangerRisks.length > 0) {
+      console.warn(`[PAPER GATEKEEPER] Rifiutato ${token.symbol || token.mint}: RugCheck Danger risks rilevati (${token.security.dangerRisks.length}).`);
+      return null;
+    }
+    const rScore = token.security.rawScore || token.security.scoreNormalised || 0;
+    if (rScore >= 1000 || token.security.hasCreatorRugHistory) {
+      console.warn(`[PAPER GATEKEEPER] Rifiutato ${token.symbol || token.mint}: RugCheck score eccessivo (${rScore}) o creator rug history.`);
+      return null;
+    }
+    if (token.security.freezeAuthority || token.security.mintAuthority) {
+      console.warn(`[PAPER GATEKEEPER] Rifiutato ${token.symbol || token.mint}: Authority attiva.`);
+      return null;
+    }
+    if (token.onchain && (token.onchain.botHoldersPct > 35 || token.onchain.iconReused)) {
+      console.warn(`[PAPER GATEKEEPER] Rifiutato ${token.symbol || token.mint}: Bot swarm o Icon reused.`);
+      return null;
+    }
+  }
 
   const entryPrice = token.priceUsd;
   const entryMcap = token.fdvUsd || token.marketCapUsd || 0;
@@ -1124,15 +1180,19 @@ function updatePaperSignalPrice(mint, liveToken) {
   const isDrained = isPumpFun 
     ? (liveMcapUsd > 0 && liveMcapUsd < 2500)
     : (sig.currentLiquidityUsd < 1000 && (!liveMcapUsd || liveMcapUsd < 5000));
-  if (!isDrained || livePriceUsd <= (sig.entryPriceUsd * 1.5)) {
+
+  if (isDrained) {
+    // Se la pool è drenata / ruggata, blocchiamo categoricamente ghost price fittizi da micro-swap su pool vuote
+    sig.currentPriceUsd = 0;
+    sig.currentMarketCapUsd = 0;
+  } else {
     sig.currentPriceUsd = livePriceUsd;
     if (liveMcapUsd && liveMcapUsd > 0) sig.currentMarketCapUsd = liveMcapUsd;
-  }
-
-  if (!isDrained && livePriceUsd > (sig.peakPriceUsd || 0)) {
-    sig.peakPriceUsd = livePriceUsd;
-    sig.peakMarketCapUsd = Math.max(sig.peakMarketCapUsd || 0, liveMcapUsd || 0);
-    sig.peakTimestamp = Date.now();
+    if (livePriceUsd > (sig.peakPriceUsd || 0)) {
+      sig.peakPriceUsd = livePriceUsd;
+      sig.peakMarketCapUsd = Math.max(sig.peakMarketCapUsd || 0, liveMcapUsd || 0);
+      sig.peakTimestamp = Date.now();
+    }
   }
   if (!sig.lowPriceUsd || livePriceUsd < sig.lowPriceUsd) {
     sig.lowPriceUsd = livePriceUsd;
