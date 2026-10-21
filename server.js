@@ -386,6 +386,24 @@ function evaluateDegenSniperPipeline(token) {
     rejectionReasons.push(`Bundler Launch eccessivo (${token.onchain.bundlerHoldingAthPct}% > 28%) — Trap Dev`);
   }
 
+  // 5) Filtro Liquidità Bloccata / Bruciata (Anti-LP Pull Rug):
+  // Su pool Raydium, DEX AMM e token graduati: la liquidità DEVE essere bloccata/bruciata almeno all'80%!
+  // Nota: su pump.fun bonding curve attive (< 45m), il protocollo pump.fun blocca la liquidità nel programma.
+  // Su pool AMM Raydium libere, se lpLockedPct < 80%, il dev ha in mano gli LP token e può sfilare la liquidità (rug pull).
+  const isPumpFunBonding = (dexIdLow.includes('pump') || dexIdLow.includes('pumpswap')) && ageMinutes <= 45;
+  if (token.security && !isPumpFunBonding) {
+    const lpLocked = token.security.lpLockedPct ?? 0;
+    if (lpLocked < 80) {
+      rejectionReasons.push(`Liquidità NON bloccata/bruciata (${lpLocked}% < 80%) — Rischio rimozione LP immediato`);
+    }
+  }
+
+  // 6) Filtro Authority Attiva (Honeypot / Blocco Trasferimenti):
+  // Se la Freeze Authority o Mint Authority è ancora attiva (non revocata), il dev può bloccare le vendite o mintare miliardi di token!
+  if (token.security && (token.security.freezeAuthority || token.security.mintAuthority)) {
+    rejectionReasons.push(`Authority attiva (${token.security.freezeAuthority ? 'Freeze' : 'Mint'}) — Rischio blocco vendite / Honeypot`);
+  }
+
   // =========================================================================
   // SEGNALI DI ALLERTA (WARNINGS) — NON BLOCCANO IL SEGNALE MA INFORMANO IL DEGEN
   // =========================================================================
