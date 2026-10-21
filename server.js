@@ -1967,7 +1967,23 @@ async function scanSolanaFourPhases() {
   }
 
   // 2) Aggiorniamo tutti i segnali nel Paper Wallet con la Strategia Degen (TP1 +45%, TP2 +100%, SL -12%) vs Hold
-  for (const [mint] of paperSignals.entries()) {
+  for (const [mint, sig] of paperSignals.entries()) {
+    // Monitoraggio Sicurezza Attiva in Tempo Reale:
+    // Se un token aperto sviluppa rischi DANGER o score catastrofico su RugCheck, chiusura immediata di emergenza
+    if (sig.status === 'OPEN') {
+      getFullRugCheckAudit(mint, sig.pairAddress).then(sec => {
+        if (sec && (sec.dangerRisks?.length > 0 || (sec.rawScore || sec.scoreNormalised) >= 1000 || sec.hasCreatorRugHistory)) {
+          sig.status = 'CLOSED';
+          sig.closedAt = new Date().toISOString();
+          sig.scalpState = 'RUG_DRAINED';
+          sig.remainingWeight = 0;
+          const riskNames = sec.dangerRisks?.map(r => r.name).join(', ') || 'Score Danger';
+          sig.scalpStatusText = `☠️ RugCheck Danger Rilevato (${riskNames}) — Chiusura di Emergenza`;
+          savePaperSignals();
+        }
+      }).catch(() => {});
+    }
+
     const fromScan = tokenMap.get(mint);
     const fromDex = latestDexPrices.get(mint);
     const bestLive = fromScan || fromDex;

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T23:12:46.006Z",
+  "updatedAt": "2026-10-21T23:34:40.037Z",
   "settings": {
     "tradeSizeUsd": 25,
     "initialBudgetUsd": 1000,
@@ -69,7 +69,7 @@
       },
       "feesPaidUsd": 1.57,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "ud4M3i1dycez8U91QekZSokMVgJTM2CWuvpdj5kaoeQ",
@@ -191,7 +191,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "h87aexUtFKuxZKmfyPhc6cA8x898FeXYhKWSZFupump",
@@ -252,7 +252,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "ESwCrBKcfG3spu14aJeEiMg7hw5aEMGj1iXK9UeZKtQf",
@@ -435,7 +435,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "7R8MRgqn2rHPh5uwe2UJCtpXjHbofgRvi45rnrjWpump",
@@ -496,7 +496,7 @@
       },
       "feesPaidUsd": 2.41,
       "currentValueUsd": 39.23,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "3mP7uyUpxozTazybGm1qqv8BmhQ2TJ2zSsAnsJUnpump",
@@ -557,7 +557,7 @@
       },
       "feesPaidUsd": 1.99,
       "currentValueUsd": 33.1,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "5G881aUWzaH5T5SkeNqvAPAHWnYPaVWD434mXCAfpump",
@@ -618,7 +618,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "8JXnou9QLpiJUfbSrh9x1EFpWTsdTsXehMd5ybQ6pump",
@@ -645,7 +645,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2069.37,
+      "currentLiquidityUsd": 2128.56,
       "peakPriceUsd": 0.00013257583080202986,
       "peakMarketCapUsd": 131815.554068836,
       "peakTimestamp": 1792450512567,
@@ -679,7 +679,7 @@
       },
       "feesPaidUsd": 2,
       "currentValueUsd": 31.73,
-      "lastUpdatedAt": "2026-10-21T11:57:15.746Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "7p9A4FUNYFQL9AvKk2xoqwDbskHGbMHaf47S3ue4RwbX",
@@ -801,7 +801,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "8BFNqegDHutAJfVtprTd6ifXBtuWiNq9we6RmWiDpump",
@@ -826,19 +826,19 @@
         "⚡ Volume Velocity Esplosivo (~$$9.2k/m • $$45.9k/5m)",
         "🔥 Attività Frenetica (90.2 transazioni/min)"
       ],
-      "currentPriceUsd": 0.000001951,
-      "currentMarketCapUsd": 1930,
-      "currentLiquidityUsd": 1996.98,
+      "currentPriceUsd": 0,
+      "currentMarketCapUsd": 0,
+      "currentLiquidityUsd": 1996.34,
       "peakPriceUsd": 0.00019571800815259416,
       "peakMarketCapUsd": 192732.9563,
       "peakTimestamp": 1792451512538,
       "lowPriceUsd": 0.000001895,
-      "pnlPct": -100,
+      "pnlPct": -6.32,
       "maxGainPct": 0,
       "maxDrawdownPct": -99.03,
       "tradeSizeUsd": 25,
-      "holdValueUsd": 0,
-      "holdPnlUsd": -25,
+      "holdValueUsd": 23.42,
+      "holdPnlUsd": -1.58,
       "scalpState": "STOPPED_OUT",
       "scalpStatusText": "🛑 Stop Loss (-22% Eseguito) [Fee/Slip: -$1.58]",
       "tp1Hit": false,
@@ -862,7 +862,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T10:56:12.270Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "FFUd9sB1Aehe5aWNX7QkBrJvXPkLvh18RW9iMpqtpump",
@@ -889,7 +889,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2524.92,
+      "currentLiquidityUsd": 2551.79,
       "peakPriceUsd": 0.0005528,
       "peakMarketCapUsd": 549083,
       "peakTimestamp": 1792456939100,
@@ -923,7 +923,7 @@
       },
       "feesPaidUsd": 2.38,
       "currentValueUsd": 40.15,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "Bt3zgdPaN2ZeTqLubYcweq866NoqYXVWMgvWHjTTJS7q",
@@ -1228,7 +1228,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 0,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "Bdvept1HaYn7DzbEGz1hWFagH7xe7BnE3YwZDbQgvo1E",
@@ -1314,19 +1314,19 @@
         "⚡ Volume Velocity Esplosivo (~$$11.3k/m • $$56.6k/5m)",
         "🔥 Attività Frenetica (115.2 transazioni/min)"
       ],
-      "currentPriceUsd": 0.001423,
-      "currentMarketCapUsd": 1413562,
-      "currentLiquidityUsd": 116878.58,
+      "currentPriceUsd": 0.00129,
+      "currentMarketCapUsd": 1280852,
+      "currentLiquidityUsd": 111148.33,
       "peakPriceUsd": 0.002153,
       "peakMarketCapUsd": 2137884,
       "peakTimestamp": 1792512977028,
       "lowPriceUsd": 0.0002362,
-      "pnlPct": 416.4,
+      "pnlPct": 367.56,
       "maxGainPct": 690.9,
       "maxDrawdownPct": -13.23,
       "tradeSizeUsd": 25,
-      "holdValueUsd": 129.1,
-      "holdPnlUsd": 104.1,
+      "holdValueUsd": 116.89,
+      "holdPnlUsd": 91.89,
       "scalpState": "TP2_TRAILED",
       "scalpStatusText": "🏆 Moon Bag Chiusa da Trailing Stop -35% (TP1 +40% + TP2 2X + Moon Bag a +414%) [Fee/Slip: -$2.38]",
       "tp1Hit": true,
@@ -1350,7 +1350,7 @@
       },
       "feesPaidUsd": 2.38,
       "currentValueUsd": 67.56,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "HoHugVwu7zHAfPojoCiVmzQYX6QacUnH9mBUs5vG6jkr",
@@ -1533,7 +1533,7 @@
       },
       "feesPaidUsd": 2.4,
       "currentValueUsd": 53.43,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "EJTStNvjby1vT9NtFjCsZMukrrEm7XHwbZyrXWiPGMRY",
@@ -1655,7 +1655,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 19.55,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "Df18xmSEf64DXaKMMfoCrJaEgqBKVc7rXfmKDyagpump",
@@ -1716,7 +1716,7 @@
       },
       "feesPaidUsd": 1.57,
       "currentValueUsd": 15.33,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "CojBYYUcrbC6RfjvG6uCdfcMVdpqMnVSCYCjzr3BAL6j",
@@ -1838,7 +1838,7 @@
       },
       "feesPaidUsd": 1.97,
       "currentValueUsd": 31.41,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "3WNuLjzMuUxDDwhoz8pfEQoUy96wNRrrMvcTsbynpump",
@@ -1899,7 +1899,7 @@
       },
       "feesPaidUsd": 2.4,
       "currentValueUsd": 54.97,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "BLr7LaB55PLj8DxchLZKRVCtXx7ugzXWiwzpJhVtpump",
@@ -1960,7 +1960,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 10,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "6gXN9N4yGwstzHHEABzpkPFWqZfpS9aBqMHewe5Vpump",
@@ -2021,7 +2021,7 @@
       },
       "feesPaidUsd": 1.99,
       "currentValueUsd": 30.87,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "5TtNFD1A5X8AZkkDERnwG3aS1eYjFKK1yxc9BmpgM6gk",
@@ -2143,7 +2143,7 @@
       },
       "feesPaidUsd": 1.57,
       "currentValueUsd": 10,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "rDMvcyEkds8vLk5Vyag3t93Z5UnGfo9DTN75k7epump",
@@ -2204,7 +2204,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 18.7,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "93iqi7JSBc5jbNWjNZqs7nqFWaEaLzPxmPYLvnVspump",
@@ -2265,7 +2265,7 @@
       },
       "feesPaidUsd": 1.98,
       "currentValueUsd": 29.92,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "9SzQ2oUyxALCmbGd3isX9RTaXBWdDpV6B3fK8Tovpump",
@@ -2326,7 +2326,7 @@
       },
       "feesPaidUsd": 2.38,
       "currentValueUsd": 38.92,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "FP9HKxKKzBfQrRJHY5DNoMvNgEqCaMJoKejvtvtopump",
@@ -2353,7 +2353,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2730.34,
+      "currentLiquidityUsd": 2715.34,
       "peakPriceUsd": 0.003233659533634447,
       "peakMarketCapUsd": 2966756.32445636,
       "peakTimestamp": 1792536908426,
@@ -2387,7 +2387,7 @@
       },
       "feesPaidUsd": 1.97,
       "currentValueUsd": 30.24,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "FRxrPaW13A6j9a8AgRPb9ko2PvVefxNQrJSmqEPNLrgU",
@@ -2448,7 +2448,7 @@
       },
       "feesPaidUsd": 1.99,
       "currentValueUsd": 33.34,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:33:59.845Z"
     },
     {
       "mint": "2Tycgp3NEenmUrQRLxTreEGAQieSyPqmkurW5ZY93jVG",
@@ -2570,7 +2570,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 14.67,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "2gJBAZVtxFcQzj3NQDKgqKbpECh6epSoq8Mzu4Fupump",
@@ -2631,7 +2631,7 @@
       },
       "feesPaidUsd": 1.98,
       "currentValueUsd": 31.62,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "AjSQ5K3cg27r8jFyEBvY2XneyPRn4vXRt37wA5KNpump",
@@ -2692,7 +2692,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 10,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "ADmo4PzQdTBgsfHad4ZMhy4Nzx7VxMhqkXiHP8kZpump",
@@ -2753,7 +2753,7 @@
       },
       "feesPaidUsd": 1.96,
       "currentValueUsd": 35.58,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "FD28DUH1YfkKK2WJ6K79pmAb7zfyPqtYjZF8BfueC9jW",
@@ -2814,7 +2814,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 10,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:33:19.614Z"
     },
     {
       "mint": "HZbpyMx3oJVrwbkPaQC8yyq6TEA9CNy1QJBawHRWpump",
@@ -2875,7 +2875,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.02,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "HDiyBw9cWAoVugs4tp6p9oZb6MRgw7Vt3UCAwpiJTUmc",
@@ -2974,17 +2974,17 @@
       "tradeSizeUsd": 25,
       "holdValueUsd": 42.32,
       "holdPnlUsd": 17.32,
-      "scalpState": "TP1_HIT",
-      "scalpStatusText": "🎯 TP1 Preso (+40% su 40%) • 60% in corsa (SL a pareggio) [Fee/Slip: -$1.98]",
+      "scalpState": "RUG_DRAINED",
+      "scalpStatusText": "☠️ RugCheck Danger Score (>1000) Rilevato — Chiuso forzatamente",
       "tp1Hit": true,
       "tp2Hit": false,
-      "remainingWeight": 0.6,
+      "remainingWeight": 0,
       "realizedUsd": 14,
       "scalpValueUsd": 38.36,
       "scalpPnlUsd": 13.36,
       "scalpPnlPct": 53.44,
-      "status": "OPEN",
-      "closedAt": null,
+      "status": "CLOSED",
+      "closedAt": "2026-10-21T23:34:40.325Z",
       "notifiedStates": [],
       "links": {
         "bullx": "https://bullx.io/terminal?chainId=1399811149&address=ChSs74hy8zCfEHkf7VhUwgYuEMKD1Mct2ES8sDker8FS",
@@ -2997,7 +2997,7 @@
       },
       "feesPaidUsd": 1.98,
       "currentValueUsd": 38.36,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "7thgKgtK1rp1UtLpWUZEuu9vakedTMoZzuyps6RGpump",
@@ -3022,9 +3022,9 @@
         "⚡ Volume Velocity Esplosivo (~$$109.2k/m • $$546.1k/5m)",
         "🔥 Attività Frenetica (550.8 transazioni/min)"
       ],
-      "currentPriceUsd": 0.00001427,
-      "currentMarketCapUsd": 14229,
-      "currentLiquidityUsd": 9848.57,
+      "currentPriceUsd": 0.00001884,
+      "currentMarketCapUsd": 18782,
+      "currentLiquidityUsd": 11577.37,
       "peakPriceUsd": 0.013050673031305115,
       "peakMarketCapUsd": 12813459,
       "peakTimestamp": 1792545993189,
@@ -3058,7 +3058,7 @@
       },
       "feesPaidUsd": 1.96,
       "currentValueUsd": 35.85,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "8zemVcC8974xhtHva7wuY64B6viXsfj24b6LH41mpump",
@@ -3121,7 +3121,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.13,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "4VKPhhDDuVRqCSQGTLXj33jK22cmM9KhN62TN5oGpump",
@@ -3184,7 +3184,7 @@
       },
       "feesPaidUsd": 1.98,
       "currentValueUsd": 31.8,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "AMuS3KCHeipZwTZmEFRuzW6Dr9YMYksWU8Rgboaupump",
@@ -3248,7 +3248,7 @@
       },
       "feesPaidUsd": 1.97,
       "currentValueUsd": 33.78,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     },
     {
       "mint": "8rPd2sYtjRXBW7rGwZpA6NxfryXCBj4PgbBavViX4g7f",
@@ -3286,17 +3286,17 @@
       "tradeSizeUsd": 25,
       "holdValueUsd": 25.76,
       "holdPnlUsd": 0.76,
-      "scalpState": "ACTIVE",
-      "scalpStatusText": "🚀 In corsa Breakout (100% • TP1 40% @ +40% • TP2 30% @ +100% • Moon Bag 30% • SL -18%) [Fee/Slip: -$1.58]",
+      "scalpState": "RUG_DRAINED",
+      "scalpStatusText": "☠️ RugCheck Danger Score (>1000) Rilevato — Chiuso forzatamente",
       "tp1Hit": false,
       "tp2Hit": false,
-      "remainingWeight": 1,
+      "remainingWeight": 0,
       "realizedUsd": 0,
       "scalpValueUsd": 25.76,
       "scalpPnlUsd": 0.76,
       "scalpPnlPct": 3.04,
-      "status": "OPEN",
-      "closedAt": null,
+      "status": "CLOSED",
+      "closedAt": "2026-10-21T23:34:40.328Z",
       "notifiedStates": [],
       "links": {
         "bullx": "https://bullx.io/terminal?chainId=1399811149&address=8rPd2sYtjRXBW7rGwZpA6NxfryXCBj4PgbBavViX4g7f",
@@ -3309,7 +3309,72 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 25.76,
-      "lastUpdatedAt": "2026-10-21T23:06:53.853Z"
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+    },
+    {
+      "mint": "4FQ9XQLavgZQkeJFxiCWdEPoH9hgp2kHetrMaaGrpump",
+      "pairAddress": "HQHUQqEzo7BmCbrbL4BCMdijXoN3ysBM13TsyvohZL17",
+      "symbol": "CYBERINU",
+      "name": "CYBERINU",
+      "imageUrl": "https://cdn.dexscreener.com/cms/images/Fxl7nkw1aqJVYIOA?width=800&height=800&quality=95&format=auto",
+      "dexId": "pumpswap",
+      "category": "DEGEN-TRENCH",
+      "verdict": "🚀 MOMENTUM BREAKOUT",
+      "ageAtSignalHours": 0.22,
+      "isManual": false,
+      "signalTime": "2026-10-21T23:24:45.265Z",
+      "signalTimestamp": 1792625085265,
+      "entryScore": 99,
+      "entryPriceUsd": 0.0001805,
+      "entryMarketCapUsd": 180578,
+      "entryLiquidityUsd": 35738.95,
+      "entrySignals": [
+        "🚀 Buy Dominance Estrema (86% Buys • 2085B/336S)",
+        "⚡ Trench Wave (13m fa)",
+        "⚡ Volume Velocity Esplosivo (~$$21.4k/m • $$107.1k/5m)",
+        "🔥 Attività Frenetica (484.2 transazioni/min)"
+      ],
+      "currentPriceUsd": 0.0001442,
+      "currentMarketCapUsd": 144242,
+      "currentLiquidityUsd": 31929.16,
+      "peakPriceUsd": 0.00018564637108633685,
+      "peakMarketCapUsd": 180578,
+      "peakTimestamp": 1792625127548,
+      "lowPriceUsd": 0.0001133,
+      "pnlPct": -26.44,
+      "maxGainPct": 2.85,
+      "maxDrawdownPct": -37.23,
+      "tradeSizeUsd": 25,
+      "holdValueUsd": 18.39,
+      "holdPnlUsd": -6.61,
+      "strategyMode": "BREAKOUT",
+      "dipMetrics": null,
+      "scalpState": "STOPPED_OUT",
+      "scalpStatusText": "🛑 Stop Loss (-37.2% Eseguito) [Fee/Slip: -$1.58]",
+      "tp1Hit": false,
+      "tp2Hit": false,
+      "remainingWeight": 0,
+      "realizedUsd": 15.69,
+      "scalpValueUsd": 15.69,
+      "scalpPnlUsd": -9.31,
+      "scalpPnlPct": -37.24,
+      "status": "CLOSED",
+      "closedAt": "2026-10-21T23:25:48.065Z",
+      "notifiedStates": [
+        "STOPPED_OUT"
+      ],
+      "links": {
+        "bullx": "https://bullx.io/terminal?chainId=1399811149&address=4FQ9XQLavgZQkeJFxiCWdEPoH9hgp2kHetrMaaGrpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/HQHUQqEzo7BmCbrbL4BCMdijXoN3ysBM13TsyvohZL17",
+        "gmgn": "https://gmgn.ai/sol/token/4FQ9XQLavgZQkeJFxiCWdEPoH9hgp2kHetrMaaGrpump",
+        "pumpfun": "https://pump.fun/coin/4FQ9XQLavgZQkeJFxiCWdEPoH9hgp2kHetrMaaGrpump",
+        "dexscreener": "https://dexscreener.com/solana/HQHUQqEzo7BmCbrbL4BCMdijXoN3ysBM13TsyvohZL17",
+        "rugcheck": "https://rugcheck.xyz/tokens/4FQ9XQLavgZQkeJFxiCWdEPoH9hgp2kHetrMaaGrpump",
+        "bubblemaps": "https://v2.bubblemaps.io/map?address=4FQ9XQLavgZQkeJFxiCWdEPoH9hgp2kHetrMaaGrpump&chain=solana"
+      },
+      "feesPaidUsd": 1.58,
+      "currentValueUsd": 15.69,
+      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
     }
   ]
 }
