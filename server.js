@@ -14,6 +14,71 @@ const rugCheckFullCache = new Map();
 const sentDiscordMints = new Set();
 let lastScanCache = { timestamp: 0, data: null };
 
+// =========================================================================
+// PRICE & LIQUIDITY TRACKER: DUAL MODE (BREAKOUT & DIP ABSORPTION)
+// Traccia picco massimo (ATH), minimo post-dump e liquidità per calcolare Higher Low e assorbimento
+// mint => { peakPrice, peakLiq, lowPriceAfterPeak, peakTimestamp, lowTimestamp, lastPrice, lastLiq, samples: [] }
+// =========================================================================
+const tokenPriceHistoryCache = new Map();
+
+function trackTokenPriceHistory(token) {
+  if (!token || !token.mint || !token.priceUsd || token.priceUsd <= 0) return null;
+  const mint = token.mint;
+  const now = Date.now();
+  let track = tokenPriceHistoryCache.get(mint);
+  const curPrice = token.priceUsd;
+  const curLiq = token.liquidityUsd || 0;
+
+  if (!track) {
+    track = {
+      mint,
+      peakPrice: curPrice,
+      peakLiq: curLiq,
+      peakTimestamp: now,
+      lowPriceAfterPeak: curPrice,
+      lowTimestamp: now,
+      lastPrice: curPrice,
+      lastLiq: curLiq,
+      samples: [{ price: curPrice, liq: curLiq, ts: now }]
+    };
+    tokenPriceHistoryCache.set(mint, track);
+    return track;
+  }
+
+  // Se il prezzo segna un nuovo massimo assoluto, aggiorniamo il picco e resettiamo il tracking del dump
+  if (curPrice > track.peakPrice) {
+    track.peakPrice = curPrice;
+    track.peakLiq = Math.max(track.peakLiq, curLiq);
+    track.peakTimestamp = now;
+    track.lowPriceAfterPeak = curPrice;
+    track.lowTimestamp = now;
+  } else {
+    // Se siamo sotto il picco, tracciamo il minimo assoluto toccato durante il ritracciamento
+    if (curPrice < track.lowPriceAfterPeak) {
+      track.lowPriceAfterPeak = curPrice;
+      track.lowTimestamp = now;
+    }
+  }
+
+  track.lastPrice = curPrice;
+  track.lastLiq = curLiq;
+  track.samples.push({ price: curPrice, liq: curLiq, ts: now });
+  if (track.samples.length > 30) track.samples.shift();
+
+  // Cleanup della cache se supera 1200 elementi (rimuove token fermi da > 2 ore)
+  if (tokenPriceHistoryCache.size > 1200) {
+    const twoHoursAgo = now - 2 * 3600 * 1000;
+    for (const [m, tr] of tokenPriceHistoryCache.entries()) {
+      const lastSample = tr.samples[tr.samples.length - 1];
+      if (!lastSample || lastSample.ts < twoHoursAgo) {
+        tokenPriceHistoryCache.delete(m);
+      }
+    }
+  }
+
+  return track;
+}
+
 let discordConfig = {
   webhookUrl: process.env.DISCORD_WEBHOOK_URL || '',
   systemUrl: SYSTEM_URL,
@@ -319,6 +384,48 @@ function evaluateDegenSniperPipeline(token) {
   const velocityPerMin = totalTx5m > 0 ? Number((totalTx5m / 5).toFixed(1)) : 0;
   const volToLiq5m = liq > 0 ? Number((vol5m / liq).toFixed(2)) : 0;
 
+  // =========================================================================
+  // VALUTAZIONE SETUP DUAL-MODE: 1) MOMENTUM BREAKOUT vs 2) DIP ABSORPTION (REVERSAL)
+  // =========================================================================
+  const track = trackTokenPriceHistory(token);
+  let isDipAbsorption = false;
+  let dipDetails = null;
+
+  if (track && track.peakPrice > 0 && track.lowPriceAfterPeak > 0) {
+    const curPrice = token.priceUsd;
+    const maxDumpFromPeakPct = ((track.lowPriceAfterPeak - track.peakPrice) / track.peakPrice) * 100;
+    const curDumpFromPeakPct = ((curPrice - track.peakPrice) / track.peakPrice) * 100;
+    const bounceFromLowPct = track.lowPriceAfterPeak > 0 
+      ? ((curPrice - track.lowPriceAfterPeak) / track.lowPriceAfterPeak) * 100 
+      : 0;
+    const liqDropPct = track.peakLiq > 0 
+      ? Math.max(0, ((track.peakLiq - liq) / track.peakLiq) * 100) 
+      : 0;
+
+    // Regola Grok/Gemini Post-Dump High Conviction:
+    // 1. Dump min: -38%, Dump max: -60% dal picco (Golden Pocket)
+    // 2. Higher Low: rimbalzo confermato >= +4.5% sopra il minimo del dump
+    // 3. Pool Liquidity Drop <= 25% rispetto al picco (Guardrail anti-drain)
+    // 4. Buy Ratio recente >= 58% (Buy/Sell >= 1.38x, buy dominance netta)
+    // 5. Volume Velocity solido (vol5m >= $15k o vol1mEst >= $3k)
+    // 6. Liquidità minima >= $20,000
+    // 7. Finestra di maturazione trench tra 6m e 55m
+    const inGoldenPocket = (maxDumpFromPeakPct <= -35 && maxDumpFromPeakPct >= -65) || (curDumpFromPeakPct <= -35 && curDumpFromPeakPct >= -65);
+    const hasHigherLow = bounceFromLowPct >= 4.5 && curPrice > track.lowPriceAfterPeak;
+    const liqPreserved = liqDropPct <= 25.0;
+    const buyDominance = buyRatio5m >= 58;
+
+    if (inGoldenPocket && hasHigherLow && liqPreserved && buyDominance && ageMinutes >= 6 && ageMinutes <= 55 && liq >= 20000) {
+      isDipAbsorption = true;
+      dipDetails = {
+        maxDumpPct: Number(maxDumpFromPeakPct.toFixed(1)),
+        curDumpPct: Number(curDumpFromPeakPct.toFixed(1)),
+        bouncePct: Number(bounceFromLowPct.toFixed(1)),
+        liqDropPct: Number(liqDropPct.toFixed(1))
+      };
+    }
+  }
+
   const rejectionReasons = [];
   const signals = [];
   const warnings = [];
@@ -345,9 +452,10 @@ function evaluateDegenSniperPipeline(token) {
     rejectionReasons.push(`Liquidità insufficiente per sniper trench (< $20.0k: ${formatUsd(liq)})`);
   }
 
-  // Filtro Frenesia Reale: per evitare che un dev compri da solo con bot, richiediamo almeno 40 tx/min (200 tx in 5m)
-  if (totalTx5m < 200 && ageMinutes <= 15) {
-    rejectionReasons.push(`Attività insufficiente: solo ${velocityPerMin} tx/min (< 40 tx/min) — Pochi compratori reali`);
+  // Filtro Frenesia Reale Breakout: per token neonati in breakout (<15m), richiediamo almeno 40 tx/min (200 tx in 5m)
+  // Non si applica se il token è in fase di Dip Absorption (dove l'attività rallenta fisiologicamente durante l'accumulo sul floor)
+  if (!isDipAbsorption && totalTx5m < 200 && ageMinutes <= 15) {
+    rejectionReasons.push(`Attività insufficiente per Breakout: solo ${velocityPerMin} tx/min (< 40 tx/min)`);
   }
 
   // FILTRI VOLUME TRENCH VELOCITY D'ÉLITE:
@@ -564,17 +672,30 @@ function evaluateDegenSniperPipeline(token) {
     verdictCode = 'WATCH';
     primaryReason = 'Audit di sicurezza RugCheck in corso / non ancora completato';
   } else {
-    score = Math.max(30, Math.min(99, Math.round(score)));
+    let strategyMode = 'BREAKOUT';
 
-    if ((score >= 75 && buyRatio5m >= 70 && ageMinutes <= 30) || (score >= 70 && sec && sec.smartMoneyCount > 0 && ageMinutes <= 30)) {
-      verdict = '🚀 DEGEN SNIPE';
+    if (isDipAbsorption) {
+      score = Math.max(88, Math.min(99, Math.round(score + 22)));
+      strategyMode = 'REVERSAL';
+      verdict = '🎯 DIP ABSORPTION';
+      verdictCode = 'ENTRY';
+      primaryReason = `Golden Pocket Reversal: Dump ${dipDetails.maxDumpPct}%, Rimbalzo +${dipDetails.bouncePct}% dal min, Liq Drain solo ${dipDetails.liqDropPct}%, Buy Ratio ${buyRatio5m}%`;
+      signals.unshift(`🎯 Golden Pocket Absorption (Dump ${dipDetails.maxDumpPct}% • Rimbalzo +${dipDetails.bouncePct}% • Liq intatta)`);
+    } else if ((score >= 75 && buyRatio5m >= 70 && ageMinutes <= 30) || (score >= 70 && sec && sec.smartMoneyCount > 0 && ageMinutes <= 30)) {
+      strategyMode = 'BREAKOUT';
+      score = Math.max(30, Math.min(99, Math.round(score)));
+      verdict = '🚀 MOMENTUM BREAKOUT';
       verdictCode = 'ENTRY';
       primaryReason = `Trench Velocity OK: ${ageMinutes}m fa, ${buyRatio5m}% Buys, Vol ~$${formatUsd(vol1mEst)}/m, ${smartMoneyText}`;
     } else if (score >= 55 && buyRatio5m >= 60 && ageMinutes <= 45) {
+      strategyMode = 'SCALP';
+      score = Math.max(30, Math.min(99, Math.round(score)));
       verdict = '⚡ FAST SCALP';
       verdictCode = 'SCALP';
       primaryReason = `Scalp Momentum: ${ageMinutes}m fa, ${buyRatio5m}% Buys (${buys5m}B/${sells5m}S), Vol $${formatUsd(vol5m)}/5m`;
     } else {
+      strategyMode = 'WATCH';
+      score = Math.max(30, Math.min(99, Math.round(score)));
       verdict = '🟡 TRENCH WATCH';
       verdictCode = 'WATCH';
       primaryReason = `In osservazione: ${ageMinutes}m fa, ${buyRatio5m}% Buys, Vol $${formatUsd(vol5m)}/5m`;
@@ -583,6 +704,8 @@ function evaluateDegenSniperPipeline(token) {
 
   return {
     category: 'DEGEN-TRENCH',
+    strategyMode,
+    dipDetails,
     ageMinutes,
     ageHours,
     isMature24h: false,
@@ -684,9 +807,13 @@ function recordPaperSignal(token, isManual = false) {
     tradeSizeUsd,
     holdValueUsd: tradeSizeUsd,
     holdPnlUsd: 0,
-    // Scaletta Degen "Sweet Spot" (TP1 40% @ +40%, TP2 30% @ +100%, Moon Bag 30% Trailing -35%, SL -18%)
+    strategyMode: token.strategyMode || 'BREAKOUT',
+    dipMetrics: token.dipMetrics || null,
+    // Scaletta Degen Dual-Mode: Breakout vs Reversal Golden Pocket
     scalpState: 'ACTIVE',
-    scalpStatusText: '🟢 In corsa Trench (100% • TP1 40% @ +40% • TP2 30% @ +100% • Moon Bag 30% • SL -18%)',
+    scalpStatusText: token.strategyMode === 'REVERSAL'
+      ? '🎯 In corsa Reversal (100% • TP1 40% @ +35% • TP2 30% @ +85% • Moon Bag 30% • SL -14%)'
+      : '🚀 In corsa Breakout (100% • TP1 40% @ +40% • TP2 30% @ +100% • Moon Bag 30% • SL -18%)',
     tp1Hit: false,
     tp2Hit: false,
     remainingWeight: 1.0,
@@ -821,6 +948,10 @@ function evaluateScalpLadderOnSignal(sig, liveTxns1h = null) {
   //      -> Totale 70% già realizzato: $25 di capitale iniziale 100% recuperati + $4 netti incassati.
   //    - Moon Bag (30% restante): lasciata correre libera con Trailing Stop ampio al -35% dal picco massimo (floor al +30% minimo).
   //      -> Permette ai veri runner di fare +300%, +500% o +1000% senza essere buttati fuori da fisiologici dump intermedi del 20-25%!
+  const isReversal = sig.strategyMode === 'REVERSAL';
+  const tp1TargetPct = isReversal ? 35 : 40;
+  const tp2TargetPct = isReversal ? 85 : 100;
+
   let remaining = 1.0;
   let realized = 0;
   let tp1Hit = false;
@@ -828,39 +959,41 @@ function evaluateScalpLadderOnSignal(sig, liveTxns1h = null) {
   let status = 'OPEN';
   let scalpState = 'ACTIVE';
   let numExits = 1;
-  let statusText = '🟢 In corsa Trench (100% • TP1 40% @ +40% • TP2 30% @ +100% • Moon Bag 30% • SL -18%)';
+  let statusText = isReversal
+    ? '🎯 In corsa Reversal (100% • TP1 40% @ +35% • TP2 30% @ +85% • Moon Bag 30% • SL -14%)'
+    : '🚀 In corsa Breakout (100% • TP1 40% @ +40% • TP2 30% @ +100% • Moon Bag 30% • SL -18%)';
 
   const prevState = sig.scalpState || 'ACTIVE';
 
-  if (maxGainPct >= 40) {
+  if (maxGainPct >= tp1TargetPct) {
     tp1Hit = true;
-    realized += size * 0.40 * 1.40; // vende il 40% a +40%
+    realized += size * 0.40 * (1 + tp1TargetPct / 100); // vende il 40% a TP1
     remaining = 0.60;
     numExits = 2;
     scalpState = 'TP1_HIT';
-    statusText = '🎯 TP1 Preso (+40% su 40%) • 60% in corsa (SL a pareggio)';
+    statusText = `🎯 TP1 Preso (+${tp1TargetPct}% su 40%) • 60% in corsa (SL a pareggio)`;
   }
 
-  if (tp1Hit && maxGainPct >= 100) {
+  if (tp1Hit && maxGainPct >= tp2TargetPct) {
     tp2Hit = true;
-    realized += size * 0.30 * 2.00; // vende il 30% a +100% (2X)
+    realized += size * 0.30 * (1 + tp2TargetPct / 100); // vende il 30% a TP2
     remaining = 0.30;
     numExits = 3;
     scalpState = 'TP2_HIT';
-    statusText = '🚀 TP2 Preso (2X su 30%) • 30% Moon Bag in corsa (Trailing -35%)';
+    statusText = `🚀 TP2 Preso (+${tp2TargetPct}% su 30%) • 30% Moon Bag in corsa (Trailing -35%)`;
   }
 
   const heldMinutes = (Date.now() - sig.signalTimestamp) / 60000;
 
   if (!tp1Hit) {
-    // Gestione Stop Loss & Grace Period Anti-Shakeout (Protezione Runner stile MILO/Alt-coin):
-    // Nei primi 90 secondi (heldMinutes < 1.5), i primi bot MEV e sniper veloci scaricano fisiologicamente generando micro-dip del -20%/-30%.
-    // Non chiudiamo sui micro-dip se il token non sta ruggando a zero (tolleranza allargata a -35% nei primi 90s).
-    // Dopo 90 secondi (heldMinutes >= 1.5), si applica lo Stop Loss standard a -22%.
+    // Gestione Stop Loss & Grace Period Anti-Shakeout:
+    // Per Breakout: tolleranza primi 90s a -35%, poi -22%
+    // Per Reversal: Stop Loss rigoroso a -14% (rottura del floor d'assorbimento invalida la tesi)
     const isEarlyGracePeriod = heldMinutes < 1.5;
-    const dynamicSlThreshold = isEarlyGracePeriod ? -35.0 : -22.0;
+    const dynamicSlThreshold = isReversal ? -14.0 : (isEarlyGracePeriod ? -35.0 : -22.0);
+    const maxDrawdownCut = isReversal ? -14.5 : -22.5;
 
-    if (currentChgPct <= dynamicSlThreshold || (!isEarlyGracePeriod && maxDrawdownPct <= -22.5)) {
+    if (currentChgPct <= dynamicSlThreshold || (!isEarlyGracePeriod && maxDrawdownPct <= maxDrawdownCut)) {
       const exitRatio = Math.max(0.40, 1 + currentChgPct / 100);
       realized += size * remaining * exitRatio;
       remaining = 0;
@@ -1297,10 +1430,17 @@ async function sendDiscordTokenAlert(token, isTest = false) {
   const chg1h = Number(token.priceChange?.h1 || 0);
   const sec = token.security || {};
 
+  const isReversal = token.strategyMode === 'REVERSAL' || token.verdict?.includes('DIP');
+  const embedColor = isReversal ? 0x10b981 : (token.verdictCode === 'ENTRY' ? 0xff0055 : 0xf59e0b);
+
+  const ladderText = isReversal
+    ? '**TP1:** +35% (Vende 40% • SL a pareggio)\n**TP2:** +85% (Vende 30% ATH Re-test • 30% Moon Bag)\n**Stop Loss:** **-14%** (Invalidazione floor dip)'
+    : '**TP1:** +40% (Vende 40% • SL a pareggio)\n**TP2:** +100% (Vende 30% 2X • 30% Moon Bag)\n**Stop Loss:** **-18%** (Grace period 90s)';
+
   const embed = {
     title: `${isTest ? '🧪 [TEST] ' : ''}${token.verdict} — ${token.symbol} (${token.ageMinutes || 1}m fa) • Score ${token.prePumpScore}/100`,
     url: token.links?.bullx || token.links?.gmgn || `https://gmgn.ai/sol/token/${token.mint}`,
-    color: token.verdictCode === 'ENTRY' ? 0xff0055 : 0xf59e0b,
+    color: embedColor,
     thumbnail: token.imageUrl ? { url: token.imageUrl } : undefined,
     description: `**Motivo:** ${token.primaryReason}\n**Mint:** \`${token.mint}\``,
     fields: [
@@ -1310,8 +1450,10 @@ async function sendDiscordTokenAlert(token, isTest = false) {
         inline: true
       },
       {
-        name: '🚀 Velocity 1m / 5m',
-        value: `**Vol 1m Est:** ~${formatUsd(token.vol1mEst)}/m\n**Vol 5m:** ${formatUsd(token.vol5m)}\n**Velocità:** ${token.velocityPerMin} tx/min`,
+        name: isReversal ? '🎯 Golden Pocket & Dip' : '🚀 Velocity 1m / 5m',
+        value: isReversal && token.dipDetails
+          ? `**Max Dump:** ${token.dipDetails.maxDumpPct}%\n**Rimbalzo:** +${token.dipDetails.bouncePct}%\n**Liq Drain:** ${token.dipDetails.liqDropPct}%`
+          : `**Vol 1m Est:** ~${formatUsd(token.vol1mEst)}/m\n**Vol 5m:** ${formatUsd(token.vol5m)}\n**Velocità:** ${token.velocityPerMin} tx/min`,
         inline: true
       },
       {
@@ -1326,7 +1468,7 @@ async function sendDiscordTokenAlert(token, isTest = false) {
       },
       {
         name: '🎯 Scaletta Uscita Degen',
-        value: `**TP1:** +30% (Vende 40% • SL a +5%)\n**TP2:** +70% (Vende 40% • 20% Moon Bag Trailing)\n**Stop Loss:** **-10%** (Protezione anti-dump)`,
+        value: ladderText,
         inline: true
       },
       {
@@ -1336,7 +1478,7 @@ async function sendDiscordTokenAlert(token, isTest = false) {
       }
     ],
     footer: {
-      text: 'Solana Degen Sniper • Trench Velocity (<30m) • TP1 +30% / TP2 +70% / SL -10%'
+      text: `Solana Degen Sniper • ${isReversal ? '🎯 Dip Absorption (Reversal)' : '🚀 Momentum Breakout'} • ${isReversal ? 'TP1 +35% / TP2 +85% / SL -14%' : 'TP1 +40% / TP2 +100% / SL -18%'}`
     },
     timestamp: new Date().toISOString()
   };

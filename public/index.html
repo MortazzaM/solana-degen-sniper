@@ -261,7 +261,7 @@
             Tutti i Trench (&lt;45m) (<span id="countValid">0</span>)
           </button>
           <button onclick="setCategoryFilter('snipe')" id="cat-snipe" class="px-2.5 py-1 rounded-md font-medium bg-slate-800/90 text-rose-300 border border-rose-500/30 hover:bg-slate-700 transition">
-            🚀 DEGEN SNIPE (<span id="countSnipe">0</span>)
+            🎯 DUAL ENTRY (<span id="countSnipe">0</span>)
           </button>
           <button onclick="setCategoryFilter('scalp')" id="cat-scalp" class="px-2.5 py-1 rounded-md font-medium bg-slate-800/90 text-amber-300 border border-amber-500/30 hover:bg-slate-700 transition">
             ⚡ FAST SCALP (<span id="countScalp">0</span>)
@@ -859,8 +859,15 @@
 
     function getVerdictBadge(t) {
       if (t.verdictCode === 'ENTRY') {
-        return `<div class="inline-flex flex-col items-center px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40">
-          <span class="text-xs font-black">🚀 DEGEN SNIPE</span>
+        const isRev = t.strategyMode === 'REVERSAL' || t.verdict?.includes('DIP');
+        if (isRev) {
+          return `<div class="inline-flex flex-col items-center px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/10">
+            <span class="text-xs font-black">🎯 DIP ABSORPTION</span>
+            <span class="text-[10px] mono font-bold text-emerald-400">Score ${t.prePumpScore}/100</span>
+          </div>`;
+        }
+        return `<div class="inline-flex flex-col items-center px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm shadow-rose-500/10">
+          <span class="text-xs font-black">🚀 MOMENTUM BREAKOUT</span>
           <span class="text-[10px] mono font-bold text-rose-400">Score ${t.prePumpScore}/100</span>
         </div>`;
       }
