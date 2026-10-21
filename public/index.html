@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solana Degen Sniper • Trench Velocity (<30m)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #080a0f;
+      color: #e2e8f0;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0d111a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #252e42;
+      border-radius: 3px;
+    }
+    .pulse-dot-red {
+      animation: pulse-ring-red 1.6s infinite;
+    }
+    @keyframes pulse-ring-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .pulse-dot-green {
+      animation: pulse-ring-green 1.6s infinite;
+    }
+    @keyframes pulse-ring-green {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .row-highlight {
+      transition: background-color 0.18s ease;
+    }
+    .row-highlight:hover {
+      background-color: rgba(30, 41, 59, 0.7);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Header -->
+  <header class="border-b border-rose-950/40 bg-[#0a0d14]/95 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-[1720px] mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-600 to-amber-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-rose-950/50">
+          🚀
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-base md:text-lg tracking-tight text-white flex items-center gap-1.5">
+              <span>SOLANA DEGEN SNIPER</span>
+              <span class="text-xs text-rose-400">⚡</span>
+            </h1>
+            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40">Trench Velocity &lt;30m</span>
+            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Ultra High-Risk</span>
+          </div>
+          <p class="text-xs text-slate-400">Pump.fun &amp; Raydium Trench (<span class="text-rose-400 font-semibold">&lt;30m</span>) • Liq &ge; $20k • Top 10 EOA &le; 30% • Anti-Bundle • <span class="text-emerald-400 font-semibold">TP1 40% @ +40% / TP2 30% @ +100% / Moon Bag 30% • SL -22% (Grace 90s)</span></p>
+        </div>
+      </div>
+
+      <!-- View Switcher Tabs -->
+      <div class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
+        <button onclick="setViewMode('both')" id="tab-both" class="px-3 py-1.5 rounded-lg font-semibold bg-rose-600 text-white transition flex items-center gap-1.5 shadow-md shadow-rose-950/40">
+          🔥 Trench Scanner + Paper Wallet
+        </button>
+        <button onclick="setViewMode('paper')" id="tab-paper" class="px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5">
+          💼 Paper Wallet Degen <span id="tabPaperBadge" class="px-1.5 py-0.2 rounded-full bg-slate-800 text-rose-400 mono text-[10px]">0</span>
+        </button>
+        <button onclick="setViewMode('radar')" id="tab-radar" class="px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white transition">
+          📡 Solo Scanner Trench
+        </button>
+      </div>
+
+      <!-- Status & Controls -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-lg text-xs">
+          <span id="liveDot" class="w-2 h-2 rounded-full bg-rose-500 pulse-dot-red"></span>
+          <span class="text-slate-400">Sync:</span>
+          <span id="countdownText" class="mono font-semibold text-rose-400">20s</span>
+        </div>
+
+        <button onclick="openDiscordModal()" id="discordHeaderBtn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 flex items-center gap-1.5 transition">
+          <span>💬</span> <span id="discordStatusLabel">Discord Sniper</span>
+        </button>
+
+        <button id="soundToggleBtn" onclick="toggleSound()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 flex items-center gap-1.5 transition">
+          <span id="soundIcon">🔕</span> <span id="soundLabel">Audio Off</span>
+        </button>
+
+        <button id="autoRefreshBtn" onclick="toggleAutoRefresh()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+          ⏸ Pausa
+        </button>
+
+        <button onclick="fetchScan(true)" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition flex items-center gap-1.5 shadow-lg shadow-rose-950/50">
+          🔄 Scansiona Ora
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAPER WALLET SECTION (DEGEN SCALP TP1 40% @ +40% / TP2 30% @ +100% / MOON BAG 30% TRAILING -35% / SL -18% vs PASSIVE HOLD) -->
+  <section id="paperWalletSection" class="max-w-[1720px] w-full mx-auto px-4 pt-4 pb-2 space-y-3">
+    <div class="bg-gradient-to-r from-[#120f18] via-[#0e111a] to-[#120f18] border border-rose-500/30 rounded-2xl p-4 shadow-2xl space-y-4">
+      <!-- Paper Wallet Header -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">💼</span>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 class="text-sm md:text-base font-extrabold text-white uppercase tracking-wide">Degen Paper Wallet — Scaletta Sweet Spot: TP1 +40% / TP2 2X / Moon Bag 30%</h2>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold mono">TP1: 40% @ +40% (SL pareggio) • TP2: 30% @ +100% (Capitale + Netto) • Moon Bag 30% (Trailing -35%) • SL -22% (Grace Period 90s)</span>
+            </div>
+            <p class="text-xs text-slate-400">Vende il 40% a +40% portando lo SL a pareggio (+3%). Vende il 30% a +100% (2X) incassando il 100% del capitale più profitto netto. Il restante 30% (Moon Bag) corre con Trailing Stop ampio (-35%) per catturare i mega moltiplicatori.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 text-xs">
+          <label class="flex items-center gap-1.5 text-slate-300 cursor-pointer bg-slate-900/90 border border-slate-800 px-2.5 py-1.5 rounded-lg">
+            <input type="checkbox" id="paperOnlyEntryVerdict" checked onchange="updatePaperSettings()" class="rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-0" />
+            <span>Solo Segnali Top <strong>🚀 DEGEN SNIPE (Score &ge; 75)</strong> (Deselezionato = include anche <strong>⚡ FAST SCALP</strong>)</span>
+          </label>
+
+          <button onclick="resetPaperWallet()" class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/70 text-rose-300 border border-rose-800/50 font-medium transition">
+            🗑️ Azzera Storico Degen
+          </button>
+        </div>
+      </div>
+
+      <!-- Paper Wallet KPI Summary -->
+      <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+        <div class="bg-[#0c0f17] border border-slate-800/90 rounded-xl p-3">
+          <div class="text-[11px] text-slate-400">Trade Eseguiti ($25 cad.)</div>
+          <div id="pwTotalTrades" class="text-xl font-bold mono text-white mt-0.5">0</div>
+          <div id="pwOpenClosedSub" class="text-[11px] text-slate-500 mono mt-0.5">0 aperti</div>
+        </div>
+
+        <div class="bg-[#0c0f17] border border-cyan-500/30 rounded-xl p-3">
+          <div class="text-[11px] text-cyan-400 font-bold">💵 CASSA / BUDGET ($1,000 MAX)</div>
+          <div id="pwAvailableCash" class="text-xl font-bold mono text-cyan-300 mt-0.5">$1,000.00</div>
+          <div id="pwBudgetStatusSub" class="text-[11px] text-slate-400 mono mt-0.5">Budget fresco: $1,000</div>
+        </div>
+
+        <div class="bg-[#0c0f17] border border-rose-500/40 rounded-xl p-3">
+          <div class="text-[11px] text-rose-400 font-bold">⚡ ESITO SCALP DEGEN (NETTO)</div>
+          <div id="pwScalpPnl" class="text-xl font-bold mono text-rose-400 mt-0.5">$0.00 (0.0%)</div>
+          <div id="pwScalpValSub" class="text-[11px] text-slate-400 mono mt-0.5">Valore Netto: $0.00</div>
+        </div>
+
+        <div class="bg-[#0c0f17] border border-slate-800/90 rounded-xl p-3">
+          <div class="text-[11px] text-slate-400">🐢 ESITO HOLD PASSIVO (NETTO)</div>
+          <div id="pwHoldPnl" class="text-xl font-bold mono text-slate-300 mt-0.5">$0.00 (0.0%)</div>
+          <div id="pwHoldValSub" class="text-[11px] text-slate-500 mono mt-0.5">Valore Hold: $0.00</div>
+        </div>
+
+        <div class="bg-[#0c0f17] border border-sky-500/25 rounded-xl p-3">
+          <div class="text-[11px] text-sky-400">Win Rate Netto (≥ +8% Netto)</div>
+          <div id="pwWinRates" class="text-xl font-bold mono text-sky-400 mt-0.5">0% vs 0%</div>
+          <div id="pwTp1RateSub" class="text-[11px] text-slate-400 mt-0.5">Raggiunto TP1 (+40%): 0%</div>
+        </div>
+
+        <div class="bg-[#0c0f17] border border-amber-500/25 rounded-xl p-3">
+          <div class="text-[11px] text-amber-400">Miglior Runner ATH Reale</div>
+          <div id="pwBestTrade" class="text-lg font-bold mono text-amber-400 mt-0.5 truncate">--</div>
+          <div id="pwBestTradeSub" class="text-[11px] text-slate-400 mono mt-0.5">Scaletta: +40% (40%) / +100% (30%)</div>
+        </div>
+      </div>
+
+      <!-- ACTIVE POSITIONS LIVE PANEL -->
+      <div id="pwActivePanel" class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 pulse-dot-red"></span>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Operazioni Trench Aperte in Tempo Reale</h3>
+            <span id="pwActiveCountBadge" class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold mono text-[11px]">0 aperte</span>
+          </div>
+          <span class="text-[11px] text-slate-400">Trailing Stop ampio -35% &amp; Stop Loss -22% (Grace Period 90s) costantemente monitorati</span>
+        </div>
+        <div id="pwActiveCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- Popolato dinamicamente da renderPaperWallet -->
+        </div>
+      </div>
+
+      <!-- Paper Filter & Search Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-800/80">
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <span class="text-slate-400 text-xs font-medium mr-1">Filtra Trade:</span>
+          <button onclick="setPaperFilter('all')" id="pwFilter-all" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-600 text-white transition">
+            Tutti (<span id="pwCountAll">0</span>)
+          </button>
+          <button onclick="setPaperFilter('open')" id="pwFilter-open" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800/90 text-rose-400 border border-rose-500/30 hover:bg-slate-700 transition">
+            🟢 Solo Aperti (<span id="pwCountOpen">0</span>)
+          </button>
+          <button onclick="setPaperFilter('closed')" id="pwFilter-closed" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800/90 text-slate-300 hover:bg-slate-700 transition">
+            📁 Chiusi (<span id="pwCountClosed">0</span>)
+          </button>
+          <button onclick="setPaperFilter('winners')" id="pwFilter-winners" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800/90 text-emerald-300 hover:bg-slate-700 transition">
+            🎯 In Profitto (<span id="pwCountWinners">0</span>)
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            id="paperSearchInput"
+            oninput="renderPaperWallet()"
+            placeholder="Cerca trade per simbolo o mint..."
+            class="bg-slate-900 border border-slate-700 rounded-md px-2.5 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 w-52"
+          />
+        </div>
+      </div>
+
+      <!-- Paper Wallet Table -->
+      <div class="overflow-x-auto border border-slate-800/80 rounded-xl">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 bg-[#0c0f17] text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+              <th class="py-2.5 px-3">Ora Segnale</th>
+              <th class="py-2.5 px-3">Token / Verdetto</th>
+              <th class="py-2.5 px-3 text-right">Entry Cap / Prezzo</th>
+              <th class="py-2.5 px-3 text-right">ATH Segnale</th>
+              <th class="py-2.5 px-3 text-right">Cap Live / Prezzo</th>
+              <th class="py-2.5 px-3 text-right bg-rose-950/20 border-x border-rose-500/20">Esito Scalp (+30%/+70%/-10%)</th>
+              <th class="py-2.5 px-3 text-right">Esito Hold Passivo</th>
+              <th class="py-2.5 px-3">Stato Degen Scalp</th>
+              <th class="py-2.5 px-3 text-right">Azioni Rapide</th>
+            </tr>
+          </thead>
+          <tbody id="paperTableBody" class="divide-y divide-slate-800/60 text-xs">
+            <tr>
+              <td colspan="9" class="py-8 text-center text-slate-400">
+                Nessun segnale paper wallet registrato. I token che raggiungono il punteggio verranno aggiunti automaticamente.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE TRENCH SCANNER SECTION -->
+  <div id="liveRadarSection" class="flex-1 flex flex-col space-y-4">
+    <section class="max-w-[1720px] w-full mx-auto px-4 pt-3 pb-1">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <!-- Filter Pills -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <button onclick="setCategoryFilter('valid')" id="cat-valid" class="px-2.5 py-1 rounded-md font-bold bg-rose-600 text-white transition">
+            Tutti i Trench (&lt;45m) (<span id="countValid">0</span>)
+          </button>
+          <button onclick="setCategoryFilter('snipe')" id="cat-snipe" class="px-2.5 py-1 rounded-md font-medium bg-slate-800/90 text-rose-300 border border-rose-500/30 hover:bg-slate-700 transition">
+            🚀 DEGEN SNIPE (<span id="countSnipe">0</span>)
+          </button>
+          <button onclick="setCategoryFilter('scalp')" id="cat-scalp" class="px-2.5 py-1 rounded-md font-medium bg-slate-800/90 text-amber-300 border border-amber-500/30 hover:bg-slate-700 transition">
+            ⚡ FAST SCALP (<span id="countScalp">0</span>)
+          </button>
+          <button onclick="setCategoryFilter('pumpfun')" id="cat-pumpfun" class="px-2.5 py-1 rounded-md font-medium bg-slate-800/90 text-emerald-300 hover:bg-slate-700 transition">
+            💊 Pump.fun Only (<span id="countPumpfun">0</span>)
+          </button>
+          <button onclick="setCategoryFilter('rejected')" id="cat-rejected" class="px-2.5 py-1 rounded-md font-medium bg-rose-950/60 text-rose-300 border border-rose-800/50 hover:bg-rose-900/60 transition">
+            ❌ Scartati (&gt;60m o Dump) (<span id="countRejected">0</span>)
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 text-xs">
+          <label class="flex items-center gap-1.5 text-slate-300 cursor-pointer">
+            <input type="checkbox" id="filterFreshOnly" onchange="renderTable()" checked class="rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-0" />
+            <span>🔥 Solo Fresh (&lt;30m di vita)</span>
+          </label>
+
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400">Ordina:</span>
+            <select id="sortSelect" onchange="renderTable()" class="bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs text-white focus:outline-none">
+              <option value="verdict">Verdetto &amp; Score</option>
+              <option value="vol5m">Volume Velocity 5m (Più alti)</option>
+              <option value="buyRatio">Buy Ratio 5m (% Più alta)</option>
+              <option value="ageAsc">Età (Più freschi prima)</option>
+              <option value="txns">Velocità Tx/min</option>
+            </select>
+          </div>
+
+          <input
+            type="text"
+            id="searchInput"
+            oninput="renderTable()"
+            placeholder="Cerca ticker o mint..."
+            class="bg-slate-900 border border-slate-700 rounded-md px-2.5 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 w-40"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Trench Candidates Table -->
+    <main class="max-w-[1720px] w-full mx-auto px-4 pb-10 flex-1 space-y-6">
+      <div class="bg-[#0e111a] border border-slate-800/80 rounded-xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 bg-[#0a0d15] text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                <th class="py-3 px-3">Verdetto / Score</th>
+                <th class="py-3 px-3">Token / Età Trench</th>
+                <th class="py-3 px-3 text-right">Prezzo / FDV &amp; Liq</th>
+                <th class="py-3 px-3 text-right">Velocity 1m / 5m</th>
+                <th class="py-3 px-3">Buy / Sell Ratio 5m</th>
+                <th class="py-3 px-3">Smart Wallets &amp; Blocco 0/1</th>
+                <th class="py-3 px-3">Motivo &amp; Segnali Trench</th>
+                <th class="py-3 px-3 text-right">Azioni Sniper Rapide</th>
+              </tr>
+            </thead>
+            <tbody id="tokenTableBody" class="divide-y divide-slate-800/60 text-xs">
+              <tr>
+                <td colspan="8" class="py-12 text-center text-slate-400">
+                  Scansione Trench Velocity in corso (GeckoTerminal New Pools + Pump.fun + Raydium + DexScreener)...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Token Detail Drawer / Modal -->
+  <div id="detailModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-[#10141f] border border-slate-700 rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-[#0a0d15]">
+        <div class="flex items-center gap-3">
+          <img id="modalImg" src="" alt="" class="w-9 h-9 rounded-full bg-slate-800 object-cover hidden" />
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 id="modalTitle" class="text-base font-bold text-white">Token</h2>
+              <span id="modalScoreBadge" class="px-2 py-0.5 rounded text-xs font-bold mono"></span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mono mt-0.5">
+              <span id="modalMint"></span>
+              <button onclick="copyModalMint()" class="text-rose-400 hover:underline text-[11px]">[Copia Mint]</button>
+            </div>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xl font-bold px-2">✕</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-5 space-y-4">
+          <div class="grid grid-cols-2 gap-2.5 text-xs">
+            <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-lg">
+              <span class="text-slate-400">FDV &amp; Curva</span>
+              <div id="modalMcap" class="text-base font-bold mono text-white mt-0.5"></div>
+            </div>
+            <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-lg">
+              <span class="text-slate-400">Liquidità &amp; Ratio</span>
+              <div id="modalLiq" class="text-base font-bold mono text-rose-400 mt-0.5"></div>
+            </div>
+            <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-lg">
+              <span class="text-slate-400">Velocity 1m / 5m</span>
+              <div id="modalVol" class="text-sm font-bold mono text-white mt-0.5"></div>
+            </div>
+            <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-lg">
+              <span class="text-slate-400">Età &amp; Tx/min</span>
+              <div id="modalTxns" class="text-sm font-bold mono text-white mt-0.5"></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-lg space-y-2">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Segnali &amp; Velocity Trench</h3>
+            <ul id="modalSignals" class="space-y-1.5 text-xs"></ul>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-lg space-y-2">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Smart Wallets &amp; Contratto</h3>
+            <div id="modalSecurity" class="text-xs space-y-1.5"></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <a id="modalLinkBullx" href="#" target="_blank" class="py-2.5 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs text-center transition">
+              🎯 Sniper BullX
+            </a>
+            <a id="modalLinkPhoton" href="#" target="_blank" class="py-2.5 px-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs text-center transition">
+              ⚡ Sniper Photon
+            </a>
+            <a id="modalLinkPump" href="#" target="_blank" class="py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs text-center transition">
+              💊 Pump.fun
+            </a>
+            <a id="modalLinkGmgn" href="#" target="_blank" class="py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs text-center transition">
+              🦎 GMGN.ai
+            </a>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden min-h-[440px]">
+          <iframe id="modalChartFrame" src="about:blank" class="w-full h-[460px] border-0"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discord Webhook Config Modal -->
+  <div id="discordModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-[#111520] border border-slate-700 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between bg-[#0a0d15]">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">💬</span>
+          <h2 class="text-base font-bold text-white">Notifiche Discord Degen Sniper</h2>
+        </div>
+        <button onclick="closeDiscordModal()" class="text-slate-400 hover:text-white text-xl font-bold px-2">✕</button>
+      </div>
+      <div class="p-5 space-y-4 text-xs">
+        <div class="space-y-1.5">
+          <label class="font-semibold text-slate-300 block">Discord Webhook URL (Canale Degen Dedicato):</label>
+          <input
+            type="text"
+            id="discordWebhookInput"
+            placeholder="https://discord.com/api/webhooks/..."
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 mono"
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="font-semibold text-slate-300 block">URL Pubblico Sistema:</label>
+            <span class="text-[10px] text-rose-400">Per link rapidi su Discord</span>
+          </div>
+          <input
+            type="text"
+            id="discordSystemUrlInput"
+            placeholder="https://solana-degen-sniper.onrender.com"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 mono"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-300 block mb-1">Punteggio Minimo (Score):</label>
+            <input
+              type="number"
+              id="discordMinScoreInput"
+              value="65"
+              min="50"
+              max="95"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white mono"
+            />
+          </div>
+          <div class="flex flex-col justify-end space-y-2 pb-1">
+            <label class="flex items-center gap-2 text-slate-200 cursor-pointer">
+              <input type="checkbox" id="discordEnabledInput" checked class="rounded bg-slate-900 border-slate-700 text-rose-500" />
+              <span>Abilita invio alerts</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="discordFeedback" class="min-h-[18px] text-xs"></div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800 flex-wrap">
+          <button onclick="testDiscordWebhook()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition">
+            🧪 Test Alert Token
+          </button>
+          <button onclick="sendManualDiscordReport()" class="px-3 py-1.5 rounded-lg bg-rose-600/30 hover:bg-rose-600/50 text-rose-300 border border-rose-500/40 font-semibold transition">
+            📊 Invia Report Degen Ora
+          </button>
+          <button onclick="saveDiscordSettings()" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold transition">
+            💾 Salva Impostazioni
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allTokens = [];
+    let paperData = { signals: [], totalTrades: 0 };
+    let currentCategoryFilter = 'valid'; // 'valid', 'snipe', 'scalp', 'pumpfun', 'rejected'
+    let currentPaperFilter = 'all'; // 'all', 'open', 'closed', 'winners'
+    let autoRefresh = true;
+    let soundEnabled = false;
+    let countdown = 20;
+    let currentModalMint = '';
+
+    function setPaperFilter(filter) {
+      currentPaperFilter = filter;
+      ['all', 'open', 'closed', 'winners'].forEach(f => {
+        const btn = document.getElementById('pwFilter-' + f);
+        if (!btn) return;
+        if (f === filter) {
+          btn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-600 text-white transition';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800/90 text-slate-300 hover:bg-slate-700 transition';
+        }
+      });
+      renderPaperWallet();
+    }
+
+    function setViewMode(mode) {
+      const pwSec = document.getElementById('paperWalletSection');
+      const radarSec = document.getElementById('liveRadarSection');
+      ['both', 'paper', 'radar'].forEach(m => {
+        const btn = document.getElementById('tab-' + m);
+        if (m === mode) {
+          btn.className = 'px-3 py-1.5 rounded-lg font-semibold bg-rose-600 text-white transition flex items-center gap-1.5 shadow-md shadow-rose-950/40';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5';
+        }
+      });
+      if (mode === 'both') {
+        pwSec.classList.remove('hidden');
+        radarSec.classList.remove('hidden');
+      } else if (mode === 'paper') {
+        pwSec.classList.remove('hidden');
+        radarSec.classList.add('hidden');
+      } else {
+        pwSec.classList.add('hidden');
+        radarSec.classList.remove('hidden');
+      }
+    }
+
+    function formatUsd(val) {
+      if (!val || isNaN(val)) return '$0';
+      if (val >= 1_000_000) return '$' + (val / 1_000_000).toFixed(2) + 'M';
+      if (val >= 1_000) return '$' + (val / 1_000).toFixed(1) + 'k';
+      return '$' + Math.round(val);
+    }
+
+    function formatTokenPrice(p) {
+      const n = Number(p || 0);
+      if (n <= 0) return '$0';
+      if (n >= 1) return '$' + n.toFixed(3);
+      if (n >= 0.001) return '$' + n.toFixed(5);
+      return '$' + n.toExponential(2);
+    }
+
+    function formatElapsed(ts) {
+      if (!ts) return 'N/D';
+      const diffMin = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+      if (diffMin < 60) return diffMin + 'm fa';
+      const h = Math.floor(diffMin / 60);
+      return h + 'h ' + (diffMin % 60) + 'm fa';
+    }
+
+    function formatPct(val) {
+      const n = Number(val || 0);
+      const sign = n > 0 ? '+' : '';
+      const cls = n > 0 ? 'text-emerald-400' : n < 0 ? 'text-rose-400' : 'text-slate-400';
+      return `<span class="${cls} mono">${sign}${n.toFixed(1)}%</span>`;
+    }
+
+    function renderPaperWallet(paper) {
+      if (!paper) paper = paperData;
+      if (!paper) return;
+      paperData = paper;
+
+      if (paper.settings && paper.settings.onlyEntryVerdict !== undefined) {
+        const chk = document.getElementById('paperOnlyEntryVerdict');
+        if (chk) chk.checked = Boolean(paper.settings.onlyEntryVerdict);
+      }
+
+      document.getElementById('tabPaperBadge').textContent = paper.totalTrades || 0;
+      document.getElementById('pwTotalTrades').textContent = paper.totalTrades || 0;
+      document.getElementById('pwOpenClosedSub').textContent = `Investito: $${(paper.totalInvested || 0).toFixed(0)} (${paper.openTrades || 0} aperti)`;
+
+      // Cassa & Budget $1000
+      const availCash = paper.availableCashUsd !== undefined ? paper.availableCashUsd : 1000;
+      const budgetLeft = paper.freshBudgetRemaining !== undefined ? paper.freshBudgetRemaining : 1000;
+      const cashEl = document.getElementById('pwAvailableCash');
+      if (cashEl) {
+        const cashCls = availCash >= 25 ? 'text-cyan-300' : 'text-amber-400';
+        cashEl.className = `text-xl font-bold mono mt-0.5 ${cashCls}`;
+        cashEl.textContent = `$${availCash.toFixed(2)}`;
+      }
+      const budgetSubEl = document.getElementById('pwBudgetStatusSub');
+      if (budgetSubEl) {
+        if (budgetLeft > 0) {
+          budgetSubEl.textContent = `Budget fresco: $${budgetLeft.toFixed(0)} / $1,000`;
+        } else if (availCash >= 25) {
+          budgetSubEl.innerHTML = `<span class="text-emerald-400 font-semibold">🔄 Auto-Finanziato dai Gain</span>`;
+        } else {
+          budgetSubEl.innerHTML = `<span class="text-rose-400 font-semibold">⏸ Cassa Esaurita (&lt; $25)</span>`;
+        }
+      }
+
+      // Scalp KPI
+      const scalpPnlUsd = paper.scalpPnlUsd || 0;
+      const scalpPnlPct = paper.scalpPnlPct || 0;
+      const scalpSign = scalpPnlUsd >= 0 ? '+' : '';
+      const scalpCls = scalpPnlUsd >= 0 ? 'text-emerald-400' : 'text-rose-400';
+      document.getElementById('pwScalpPnl').innerHTML = `<span class="${scalpCls}">${scalpSign}$${scalpPnlUsd.toFixed(2)} (${scalpSign}${scalpPnlPct.toFixed(1)}%)</span>`;
+      document.getElementById('pwScalpValSub').textContent = `Valore Portafoglio: $${(paper.scalpPortfolioValue || 0).toFixed(2)}`;
+
+      // Hold KPI
+      const holdPnlUsd = paper.holdPnlUsd || 0;
+      const holdPnlPct = paper.holdPnlPct || 0;
+      const holdSign = holdPnlUsd >= 0 ? '+' : '';
+      const holdCls = holdPnlUsd >= 0 ? 'text-emerald-400' : 'text-rose-400';
+      document.getElementById('pwHoldPnl').innerHTML = `<span class="${holdCls}">${holdSign}$${holdPnlUsd.toFixed(2)} (${holdSign}${holdPnlPct.toFixed(1)}%)</span>`;
+      document.getElementById('pwHoldValSub').textContent = `Valore Hold Passivo: $${(paper.holdPortfolioValue || 0).toFixed(2)}`;
+
+      // Win Rates
+      const winRateScalp = paper.winRateScalp || 0;
+      const winRateHold = paper.winRateHold || 0;
+      document.getElementById('pwWinRates').textContent = `${winRateScalp}% vs ${winRateHold}%`;
+      document.getElementById('pwTp1RateSub').textContent = `Raggiunto TP1 (+40%): ${paper.tp1Rate || 0}%`;
+
+      // Best Trade
+      if (paper.bestTrade && paper.bestTrade.symbol) {
+        document.getElementById('pwBestTrade').textContent = `${paper.bestTrade.symbol} (+${(paper.bestTrade.maxGainPct || 0).toFixed(0)}% ATH)`;
+        document.getElementById('pwBestTradeSub').textContent = `Esito Scalp Netto: +${(paper.bestTrade.scalpPnlPct || 0).toFixed(1)}%`;
+      } else {
+        document.getElementById('pwBestTrade').textContent = '--';
+        document.getElementById('pwBestTradeSub').textContent = 'Scaletta: +40% (40%) / +100% (30%)';
+      }
+
+      // Active Positions Cards
+      const signals = paper.signals || [];
+      const openSignals = signals.filter(s => s.status !== 'CLOSED');
+      document.getElementById('pwActiveCountBadge').textContent = `${openSignals.length} aperti`;
+
+      const activeContainer = document.getElementById('pwActiveCardsContainer');
+      if (openSignals.length === 0) {
+        activeContainer.innerHTML = `
+          <div class="col-span-full py-4 text-center text-slate-400 text-xs bg-slate-950/40 border border-slate-800/80 rounded-xl">
+            Nessuna posizione aperta. Quando viene rilevato un token con segnale DEGEN SNIPE, verrà aperto automaticamente un trade test.
+          </div>
+        `;
+      } else {
+        activeContainer.innerHTML = openSignals.map(s => {
+          const pnlPct = Number(s.scalpPnlPct ?? s.pnlPct ?? 0);
+          const pnlSign = pnlPct >= 0 ? '+' : '';
+          const pnlCls = pnlPct >= 0 ? 'text-emerald-400' : 'text-rose-400';
+          const maxGain = Number(s.maxGainPct || 0);
+
+          return `
+            <div class="bg-gradient-to-br from-[#10141f] to-[#0c0f17] border border-rose-500/30 rounded-xl p-3 shadow-lg flex flex-col justify-between space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-rose-500 pulse-dot-red"></span>
+                  <span class="font-extrabold text-white text-sm">${s.symbol}</span>
+                  <span class="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold mono">In Corsa</span>
+                </div>
+                <div class="text-right">
+                  <span class="font-bold mono text-sm ${pnlCls}">${pnlSign}${pnlPct.toFixed(1)}%</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-1 text-[11px] mono text-slate-300 pt-1 border-t border-slate-800">
+                <div>
+                  <span class="text-[10px] text-slate-400 block">Entry Cap</span>
+                  ${formatUsd(s.entryMarketCapUsd)}
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-400 block">ATH Segnale</span>
+                  <span class="text-amber-400 font-bold">+${maxGain.toFixed(0)}%</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-400 block">Target TP1</span>
+                  <span class="text-emerald-400">+40%</span>
+                </div>
+              </div>
+              <div class="text-[11px] text-slate-300 font-medium">
+                ${s.scalpStatusText || '🟢 In posizione'}
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-slate-800">
+                <a href="https://bullx.io/terminal?chainId=1399811149&address=${s.mint}" target="_blank" class="text-[11px] text-amber-400 hover:underline font-bold">🎯 BullX</a>
+                <a href="https://photon-sol.tinyastro.io/en/lp/${s.pairAddress || s.mint}" target="_blank" class="text-[11px] text-cyan-400 hover:underline font-bold">⚡ Photon</a>
+                <a href="https://pump.fun/coin/${s.mint}" target="_blank" class="text-[11px] text-emerald-400 hover:underline font-bold">💊 Pump</a>
+                <button onclick="toggleClosePaper('${s.mint}')" class="px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-[10px] border border-rose-800/40">💰 Chiudi</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Filter counts
+      document.getElementById('pwCountAll').textContent = signals.length;
+      document.getElementById('pwCountOpen').textContent = openSignals.length;
+      document.getElementById('pwCountClosed').textContent = signals.filter(s => s.status === 'CLOSED').length;
+      document.getElementById('pwCountWinners').textContent = signals.filter(s => (s.scalpPnlPct || 0) > 0 || s.tp1Hit).length;
+
+      // Table Render
+      const searchVal = (document.getElementById('paperSearchInput')?.value || '').trim().toLowerCase();
+      let filteredSignals = [...signals];
+      if (currentPaperFilter === 'open') {
+        filteredSignals = filteredSignals.filter(s => s.status !== 'CLOSED');
+      } else if (currentPaperFilter === 'closed') {
+        filteredSignals = filteredSignals.filter(s => s.status === 'CLOSED');
+      } else if (currentPaperFilter === 'winners') {
+        filteredSignals = filteredSignals.filter(s => (s.scalpPnlPct || 0) > 0 || s.tp1Hit);
+      }
+
+      if (searchVal) {
+        filteredSignals = filteredSignals.filter(s =>
+          (s.symbol || '').toLowerCase().includes(searchVal) ||
+          (s.mint || '').toLowerCase().includes(searchVal)
+        );
+      }
+
+      const tbody = document.getElementById('paperTableBody');
+      if (filteredSignals.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-8 text-center text-slate-400">
+              Nessun trade corrisponde al filtro o alla ricerca selezionata.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filteredSignals.map(s => {
+        const sigTime = new Date(s.signalTimestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        const elapsed = formatElapsed(s.signalTimestamp);
+        const isClosed = s.status === 'CLOSED';
+
+        const scalpPnlPct = Number(s.scalpPnlPct ?? s.pnlPct ?? 0);
+        const scalpVal = Number(s.scalpValueUsd ?? s.currentValueUsd ?? 100);
+        const scalpSign = scalpPnlPct >= 0 ? '+' : '';
+        const scalpCls = scalpPnlPct > 0 ? 'text-emerald-400' : scalpPnlPct < 0 ? 'text-rose-400' : 'text-slate-200';
+
+        const holdPnlPct = Number(s.pnlPct || 0);
+        const holdVal = Number(s.holdValueUsd ?? s.currentValueUsd ?? 100);
+        const holdSign = holdPnlPct >= 0 ? '+' : '';
+        const holdCls = holdPnlPct > 0 ? 'text-emerald-400' : holdPnlPct < 0 ? 'text-rose-400' : 'text-slate-400';
+
+        const maxGain = Number(s.maxGainPct || 0);
+
+        return `
+          <tr class="row-highlight ${isClosed ? 'bg-slate-900/40 opacity-80' : 'bg-slate-950/20'}">
+            <td class="py-2.5 px-3 whitespace-nowrap">
+              <div class="mono font-semibold text-white">${sigTime}</div>
+              <div class="text-[10px] text-slate-400 mono">${elapsed}</div>
+            </td>
+
+            <td class="py-2.5 px-3 whitespace-nowrap">
+              <div class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full ${isClosed ? 'bg-slate-600' : 'bg-rose-400 pulse-dot-red'}"></span>
+                <span class="font-bold text-white text-sm">${s.symbol}</span>
+                ${!isClosed ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold uppercase">Aperto</span>' : ''}
+              </div>
+              <div class="text-[10px] text-slate-400 mono">Score ${s.entryScore} • Degen</div>
+            </td>
+
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <div class="font-bold text-slate-200 mono">${formatUsd(s.entryMarketCapUsd)}</div>
+              <div class="text-[10px] text-slate-400 mono">${formatTokenPrice(s.entryPriceUsd)}</div>
+            </td>
+
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <div class="font-bold mono text-amber-400">+${maxGain.toFixed(1)}%</div>
+              <div class="text-[10px] text-slate-400 mono">Max: ${formatUsd(s.peakMarketCapUsd)}</div>
+            </td>
+
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <div class="font-bold text-white mono">${formatUsd(s.currentMarketCapUsd)}</div>
+              <div class="text-[10px] text-slate-400 mono">${formatTokenPrice(s.currentPriceUsd)}</div>
+            </td>
+
+            <!-- Esito SCALP -->
+            <td class="py-2.5 px-3 text-right whitespace-nowrap bg-rose-950/15 border-x border-rose-500/15">
+              <div class="font-bold mono text-sm ${scalpCls}">${scalpSign}${scalpPnlPct.toFixed(1)}%</div>
+              <div class="text-[11px] mono ${scalpCls}">$${scalpVal.toFixed(2)}</div>
+            </td>
+
+            <!-- Esito HOLD -->
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <div class="font-semibold mono text-xs ${holdCls}">${holdSign}${holdPnlPct.toFixed(1)}%</div>
+              <div class="text-[10px] mono text-slate-500">$${holdVal.toFixed(2)}</div>
+            </td>
+
+            <!-- Stato Operativo -->
+            <td class="py-2.5 px-3 max-w-[260px]">
+              <div class="text-[11px] text-slate-200 font-medium">${s.scalpStatusText || '🟢 Attivo'}</div>
+            </td>
+
+            <!-- Azioni -->
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <div class="inline-flex items-center gap-1">
+                <a href="https://bullx.io/terminal?chainId=1399811149&address=${s.mint}" target="_blank" class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 text-[11px] font-bold transition">
+                  BullX
+                </a>
+                <a href="https://photon-sol.tinyastro.io/en/lp/${s.pairAddress || s.mint}" target="_blank" class="px-2 py-1 rounded bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 text-[11px] font-bold transition">
+                  Photon
+                </a>
+                <a href="https://pump.fun/coin/${s.mint}" target="_blank" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 text-[11px] font-bold transition">
+                  Pump
+                </a>
+                <button onclick="toggleClosePaper('${s.mint}')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] border border-slate-700 transition">
+                  ${isClosed ? '🔓 Riapri' : '💰 Chiudi'}
+                </button>
+                <button onclick="deletePaperSignal('${s.mint}')" class="px-1.5 py-1 rounded bg-rose-950/50 hover:bg-rose-900 text-rose-300 text-[11px] transition">
+                  ✕
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function setCategoryFilter(cat) {
+      currentCategoryFilter = cat;
+      ['valid', 'snipe', 'scalp', 'pumpfun', 'rejected'].forEach(c => {
+        const btn = document.getElementById('cat-' + c);
+        if (!btn) return;
+        if (c === cat) {
+          btn.className = 'px-2.5 py-1 rounded-md text-xs font-bold bg-rose-600 text-white transition';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800/90 text-slate-300 hover:bg-slate-700 transition';
+        }
+      });
+      renderTable();
+    }
+
+    function filterTokens(tokens) {
+      const onlyFresh = document.getElementById('filterFreshOnly')?.checked;
+      const sortBy = document.getElementById('sortSelect').value;
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      let list = tokens.filter(t => {
+        if (currentCategoryFilter === 'valid' && t.verdictCode === 'REJECTED') return false;
+        if (currentCategoryFilter === 'rejected' && t.verdictCode !== 'REJECTED') return false;
+        if (currentCategoryFilter === 'snipe' && t.verdictCode !== 'ENTRY') return false;
+        if (currentCategoryFilter === 'scalp' && t.verdictCode !== 'SCALP') return false;
+        if (currentCategoryFilter === 'pumpfun' && t.dexId !== 'pumpswap' && !t.curveStatus?.includes('Pump')) return false;
+
+        if (onlyFresh && (t.ageMinutes || 0) > 30) return false;
+
+        if (q) {
+          const matchSymbol = (t.symbol || '').toLowerCase().includes(q);
+          const matchName = (t.name || '').toLowerCase().includes(q);
+          const matchMint = (t.mint || '').toLowerCase().includes(q);
+          if (!matchSymbol && !matchName && !matchMint) return false;
+        }
+        return true;
+      });
+
+      const verdictPriority = { ENTRY: 4, SCALP: 3, WATCH: 2, REJECTED: 1 };
+      list.sort((a, b) => {
+        if (sortBy === 'vol5m') return (b.vol5m || 0) - (a.vol5m || 0);
+        if (sortBy === 'buyRatio') return (b.buyRatio5m || 0) - (a.buyRatio5m || 0);
+        if (sortBy === 'ageAsc') return (a.ageMinutes || 999) - (b.ageMinutes || 999);
+        if (sortBy === 'txns') return (b.velocityPerMin || 0) - (a.velocityPerMin || 0);
+
+        const pA = verdictPriority[a.verdictCode] || 0;
+        const pB = verdictPriority[b.verdictCode] || 0;
+        if (pA !== pB) return pB - pA;
+        return (b.prePumpScore || 0) - (a.prePumpScore || 0);
+      });
+
+      return list;
+    }
+
+    function getVerdictBadge(t) {
+      if (t.verdictCode === 'ENTRY') {
+        return `<div class="inline-flex flex-col items-center px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40">
+          <span class="text-xs font-black">🚀 DEGEN SNIPE</span>
+          <span class="text-[10px] mono font-bold text-rose-400">Score ${t.prePumpScore}/100</span>
+        </div>`;
+      }
+      if (t.verdictCode === 'SCALP') {
+        return `<div class="inline-flex flex-col items-center px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40">
+          <span class="text-xs font-bold">⚡ FAST SCALP</span>
+          <span class="text-[10px] mono text-amber-400">Score ${t.prePumpScore}/100</span>
+        </div>`;
+      }
+      if (t.verdictCode === 'WATCH') {
+        return `<div class="inline-flex flex-col items-center px-2 py-0.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
+          <span class="text-[11px] font-semibold">🟡 WATCH</span>
+          <span class="text-[9px] mono text-slate-400">Score ${t.prePumpScore}</span>
+        </div>`;
+      }
+      return `<div class="inline-flex flex-col items-center px-2 py-0.5 rounded-lg bg-rose-950/60 text-rose-400 border border-rose-900/50">
+        <span class="text-[11px] font-semibold">❌ SCARTATA</span>
+        <span class="text-[9px] mono">&gt;60m o Dump</span>
+      </div>`;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tokenTableBody');
+      const filtered = filterTokens(allTokens);
+      const trackedMints = new Set((paperData.signals || []).map(s => s.mint));
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center space-y-3">
+              <div class="text-slate-400 text-sm">Nessun token trench corrisponde a questo filtro in questo momento.</div>
+              <button onclick="document.getElementById('filterFreshOnly').checked=false; setCategoryFilter('valid');" class="px-3 py-1.5 rounded-lg bg-rose-600/30 text-rose-300 border border-rose-500/40 text-xs font-bold hover:bg-rose-600/40">
+                Mostra tutti i token (&lt;45m)
+              </button>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(t => {
+        const shortMint = t.mint.slice(0, 4) + '...' + t.mint.slice(-4);
+        const isTracked = trackedMints.has(t.mint);
+
+        const ageMin = t.ageMinutes || 1;
+        const ageBadge = ageMin <= 12
+          ? `<span class="px-1.5 py-0.5 rounded bg-rose-600/30 text-rose-300 border border-rose-500/40 font-black mono text-[10px]">🔥 ${ageMin}m fa</span>`
+          : ageMin <= 30
+            ? `<span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold mono text-[10px]">⚡ ${ageMin}m fa</span>`
+            : `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 mono text-[10px]">⏱ ${ageMin}m fa</span>`;
+
+        const isPump = t.dexId === 'pumpswap' || t.curveStatus?.includes('Pump');
+        const platformBadge = isPump
+          ? `<span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">💊 Pump.fun</span>`
+          : `<span class="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold">🎓 Raydium</span>`;
+
+        const buyRatio = t.buyRatio5m || 50;
+        const buyColor = buyRatio >= 75 ? 'bg-emerald-400' : buyRatio >= 60 ? 'bg-amber-400' : 'bg-rose-500';
+        const buyTextCls = buyRatio >= 70 ? 'text-emerald-400 font-bold' : buyRatio >= 55 ? 'text-amber-300' : 'text-rose-400';
+
+        const imgHtml = t.imageUrl
+          ? `<img src="${t.imageUrl}" alt="" class="w-8 h-8 rounded-full bg-slate-800 object-cover flex-shrink-0" onerror="this.style.display='none'" />`
+          : `<div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-rose-400 flex-shrink-0">${(t.symbol || '?').slice(0, 2)}</div>`;
+
+        const paperBtnHtml = isTracked
+          ? `<span class="px-2 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-semibold">💼 In Paper</span>`
+          : `<button onclick="addManualPaper('${t.mint}')" class="px-2 py-1 rounded bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-slate-700 text-[10px] font-medium transition">+ Paper</button>`;
+
+        return `
+          <tr class="row-highlight cursor-pointer" onclick="openModal('${t.mint}')">
+            <td class="py-3 px-3 whitespace-nowrap">
+              ${getVerdictBadge(t)}
+            </td>
+
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div class="flex items-center gap-2.5">
+                ${imgHtml}
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-white text-sm">${t.symbol}</span>
+                    ${platformBadge}
+                  </div>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    ${ageBadge}
+                    <span class="text-[10px] text-slate-500 mono">${shortMint}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <td class="py-3 px-3 text-right whitespace-nowrap">
+              <div class="font-bold text-white mono text-xs">${formatTokenPrice(t.priceUsd)}</div>
+              <div class="text-[11px] text-slate-400 mono">FDV: ${formatUsd(t.fdvUsd)} (Liq: ${formatUsd(t.liquidityUsd)})</div>
+            </td>
+
+            <td class="py-3 px-3 text-right whitespace-nowrap">
+              <div class="font-bold text-white mono text-xs">~$${formatUsd(t.vol1mEst)}/m • ${t.velocityPerMin} tx/m</div>
+              <div class="text-[11px] text-slate-400 mono">5m: ${formatUsd(t.vol5m)} (${formatPct(t.priceChange?.m5)})</div>
+            </td>
+
+            <td class="py-3 px-3 whitespace-nowrap min-w-[170px]">
+              <div class="flex items-center justify-between text-[11px] mb-1">
+                <span class="${buyTextCls}">🔥 ${buyRatio}% Buys</span>
+                <span class="text-[10px] text-slate-400 mono">${t.buys5m || 0}B / ${t.sells5m || 0}S</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="${buyColor} h-1.5" style="width: ${buyRatio}%"></div>
+              </div>
+            </td>
+
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div class="text-[11px] text-slate-200 font-medium">${t.smartMoneyText || 'Nessuno'}</div>
+              <div class="text-[10px] text-slate-400 mono">${t.curveStatus || 'Raydium'}</div>
+            </td>
+
+            <td class="py-3 px-3 max-w-[280px]">
+              <div class="text-[11px] text-slate-200 font-medium truncate">${t.primaryReason || 'In osservazione'}</div>
+              <div class="flex flex-wrap gap-1 mt-0.5">
+                ${(t.signals || []).slice(0, 2).map(s => `<span class="px-1 py-0.2 rounded bg-slate-800/80 text-[9px] text-slate-300">${s}</span>`).join('')}
+              </div>
+            </td>
+
+            <td class="py-3 px-3 text-right whitespace-nowrap" onclick="event.stopPropagation()">
+              <div class="inline-flex items-center gap-1">
+                ${paperBtnHtml}
+                <a href="${t.links?.bullx || '#'}" target="_blank" title="BullX Sniper" class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 font-bold text-[11px] transition">
+                  BullX
+                </a>
+                <a href="${t.links?.photon || '#'}" target="_blank" title="Photon Sniper" class="px-2 py-1 rounded bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-bold text-[11px] transition">
+                  Photon
+                </a>
+                <a href="${t.links?.pumpfun || '#'}" target="_blank" title="Pump.fun" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 font-bold text-[11px] transition">
+                  💊
+                </a>
+                <a href="${t.links?.gmgn || '#'}" target="_blank" title="GMGN" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] transition">
+                  GMGN
+                </a>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openModal(mint) {
+      const t = allTokens.find(x => x.mint === mint);
+      if (!t) return;
+      currentModalMint = mint;
+
+      const modal = document.getElementById('detailModal');
+      const img = document.getElementById('modalImg');
+      if (t.imageUrl) {
+        img.src = t.imageUrl;
+        img.classList.remove('hidden');
+      } else {
+        img.classList.add('hidden');
+      }
+
+      document.getElementById('modalTitle').textContent = `${t.symbol} — ${t.name || t.symbol}`;
+      document.getElementById('modalMint').textContent = t.mint;
+
+      const badge = document.getElementById('modalScoreBadge');
+      badge.textContent = `Score ${t.prePumpScore}/100 • ${t.verdict}`;
+      badge.className = t.verdictCode === 'ENTRY'
+        ? 'px-2 py-0.5 rounded text-xs font-bold mono bg-rose-500/20 text-rose-300 border border-rose-500/40'
+        : 'px-2 py-0.5 rounded text-xs font-bold mono bg-amber-500/20 text-amber-300 border border-amber-500/40';
+
+      document.getElementById('modalMcap').textContent = `${formatUsd(t.fdvUsd)} (${t.curveStatus || 'Curva'})`;
+      document.getElementById('modalLiq').textContent = `${formatUsd(t.liquidityUsd)} (${t.fdvLiqRatio}x)`;
+      document.getElementById('modalVol').textContent = `~$${formatUsd(t.vol1mEst)}/m • $${formatUsd(t.vol5m)} (5m)`;
+      document.getElementById('modalTxns').textContent = `${t.ageMinutes}m fa • ${t.velocityPerMin} tx/min`;
+
+      const sigList = document.getElementById('modalSignals');
+      sigList.innerHTML = (t.signals || []).map(s => `<li class="text-slate-300 flex items-start gap-1.5"><span class="text-rose-400">⚡</span><span>${s}</span></li>`).join('');
+
+      const secDiv = document.getElementById('modalSecurity');
+      secDiv.innerHTML = `
+        <div class="text-slate-300"><strong>Smart Wallets:</strong> ${t.smartMoneyText}</div>
+        <div class="text-slate-300"><strong>Buy Ratio:</strong> ${t.buyRatio5m}% (${t.buys5m} Buys / ${t.sells5m} Sells in 5m)</div>
+        <div class="text-slate-300"><strong>Top 10 EOA:</strong> ${t.security?.top10EoaPct ?? 'N/D'}%</div>
+        ${t.warnings?.length ? `<div class="text-amber-400 font-semibold mt-1">⚠️ Avvisi: ${t.warnings.join(' • ')}</div>` : ''}
+      `;
+
+      document.getElementById('modalLinkBullx').href = t.links?.bullx || '#';
+      document.getElementById('modalLinkPhoton').href = t.links?.photon || '#';
+      document.getElementById('modalLinkPump').href = t.links?.pumpfun || '#';
+      document.getElementById('modalLinkGmgn').href = t.links?.gmgn || '#';
+
+      const chartUrl = `https://dexscreener.com/solana/${t.pairAddress || t.mint}?embed=1&theme=dark&trades=0&info=0`;
+      document.getElementById('modalChartFrame').src = chartUrl;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detailModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.getElementById('modalChartFrame').src = 'about:blank';
+    }
+
+    function copyModalMint() {
+      if (currentModalMint) {
+        navigator.clipboard.writeText(currentModalMint);
+        alert('Mint copiato negli appunti: ' + currentModalMint);
+      }
+    }
+
+    function openDiscordModal() {
+      document.getElementById('discordModal').classList.remove('hidden');
+      document.getElementById('discordModal').classList.add('flex');
+    }
+
+    function closeDiscordModal() {
+      document.getElementById('discordModal').classList.add('hidden');
+      document.getElementById('discordModal').classList.remove('flex');
+    }
+
+    async function fetchScan(force = false) {
+      try {
+        const res = await fetch('/api/scan' + (force ? '?force=1' : ''));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        allTokens = data.tokens || [];
+        if (data.paper) {
+          paperData = data.paper;
+          renderPaperWallet(data.paper);
+        }
+
+        // Update Counter Pills
+        document.getElementById('countValid').textContent = allTokens.filter(t => t.verdictCode !== 'REJECTED').length;
+        document.getElementById('countSnipe').textContent = allTokens.filter(t => t.verdictCode === 'ENTRY').length;
+        document.getElementById('countScalp').textContent = allTokens.filter(t => t.verdictCode === 'SCALP').length;
+        document.getElementById('countPumpfun').textContent = allTokens.filter(t => t.dexId === 'pumpswap' || t.curveStatus?.includes('Pump')).length;
+        document.getElementById('countRejected').textContent = allTokens.filter(t => t.verdictCode === 'REJECTED').length;
+
+        // Discord badge
+        const dBtn = document.getElementById('discordStatusLabel');
+        if (data.discordActive) {
+          dBtn.textContent = 'Discord Attivo';
+          document.getElementById('discordHeaderBtn').className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 transition';
+        } else {
+          dBtn.textContent = 'Discord Off';
+          document.getElementById('discordHeaderBtn').className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 text-slate-400 border border-slate-800 flex items-center gap-1.5 transition';
+        }
+
+        renderTable();
+        countdown = 20;
+      } catch (err) {
+        console.error('Errore scan:', err);
+      }
+    }
+
+    async function addManualPaper(mint) {
+      try {
+        const res = await fetch('/api/paper/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mint })
+        });
+        const result = await res.json();
+        if (result.ok) {
+          fetchScan();
+        } else {
+          alert('Impossibile aggiungere: ' + (result.error || 'Errore'));
+        }
+      } catch (err) {
+        alert('Errore rete: ' + err.message);
+      }
+    }
+
+    async function toggleClosePaper(mint) {
+      try {
+        const res = await fetch('/api/paper/close', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mint })
+        });
+        const result = await res.json();
+        if (result.ok) {
+          fetchScan();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function deletePaperSignal(mint) {
+      if (!confirm('Eliminare questo trade dal registro?')) return;
+      try {
+        await fetch('/api/paper/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mint })
+        });
+        fetchScan();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function resetPaperWallet() {
+      if (!confirm('Vuoi davvero azzerare tutti i trade del Paper Wallet Degen?')) return;
+      try {
+        await fetch('/api/paper/reset', { method: 'POST' });
+        fetchScan();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function updatePaperSettings() {
+      const onlyEntry = document.getElementById('paperOnlyEntryVerdict').checked;
+      try {
+        await fetch('/api/paper/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ onlyEntryVerdict: onlyEntry })
+        });
+      } catch {}
+    }
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        document.getElementById('discordWebhookInput').value = cfg.webhookUrl || '';
+        document.getElementById('discordSystemUrlInput').value = cfg.systemUrl || '';
+        document.getElementById('discordMinScoreInput').value = cfg.minScore || 65;
+        document.getElementById('discordEnabledInput').checked = cfg.enabled !== false;
+      } catch {}
+    }
+
+    async function saveDiscordSettings() {
+      const webhookUrl = document.getElementById('discordWebhookInput').value.trim();
+      const systemUrl = document.getElementById('discordSystemUrlInput').value.trim();
+      const minScore = parseInt(document.getElementById('discordMinScoreInput').value) || 65;
+      const enabled = document.getElementById('discordEnabledInput').checked;
+      const fb = document.getElementById('discordFeedback');
+
+      fb.innerHTML = '<span class="text-slate-400">Salvataggio in corso...</span>';
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ webhookUrl, systemUrl, minScore, enabled })
+        });
+        const result = await res.json();
+        if (result.ok) {
+          fb.innerHTML = '<span class="text-emerald-400 font-semibold">✅ Impostazioni salvate con successo!</span>';
+          setTimeout(() => { closeDiscordModal(); fetchScan(); }, 900);
+        } else {
+          fb.innerHTML = `<span class="text-rose-400">❌ Errore: ${result.error}</span>`;
+        }
+      } catch (err) {
+        fb.innerHTML = `<span class="text-rose-400">❌ Errore rete: ${err.message}</span>`;
+      }
+    }
+
+    async function testDiscordWebhook() {
+      const fb = document.getElementById('discordFeedback');
+      fb.innerHTML = '<span class="text-slate-400">Invio alert di test in corso...</span>';
+      try {
+        const res = await fetch('/api/discord/test', { method: 'POST' });
+        const result = await res.json();
+        if (result.ok) {
+          fb.innerHTML = '<span class="text-emerald-400 font-semibold">🚀 Alert inviato su Discord! Controlla il canale.</span>';
+        } else {
+          fb.innerHTML = `<span class="text-rose-400">❌ Errore Discord: ${result.error}</span>`;
+        }
+      } catch (err) {
+        fb.innerHTML = `<span class="text-rose-400">❌ Errore: ${err.message}</span>`;
+      }
+    }
+
+    async function sendManualDiscordReport() {
+      const fb = document.getElementById('discordFeedback');
+      fb.innerHTML = '<span class="text-slate-400">Invio report prestazioni su Discord...</span>';
+      try {
+        const res = await fetch('/api/discord/report', { method: 'POST' });
+        const result = await res.json();
+        if (result.ok) {
+          fb.innerHTML = '<span class="text-emerald-400 font-semibold">📊 Report inviato su Discord!</span>';
+        } else {
+          fb.innerHTML = `<span class="text-rose-400">❌ Errore: ${result.error}</span>`;
+        }
+      } catch (err) {
+        fb.innerHTML = `<span class="text-rose-400">❌ Errore: ${err.message}</span>`;
+      }
+    }
+
+    function toggleAutoRefresh() {
+      autoRefresh = !autoRefresh;
+      const btn = document.getElementById('autoRefreshBtn');
+      if (autoRefresh) {
+        btn.textContent = '⏸ Pausa';
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition';
+      } else {
+        btn.textContent = '▶️ Riprendi';
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600/30 text-rose-300 border border-rose-500/40 transition';
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundIcon').textContent = soundEnabled ? '🔔' : '🔕';
+      document.getElementById('soundLabel').textContent = soundEnabled ? 'Audio On' : 'Audio Off';
+    }
+
+    // Countdown loop
+    setInterval(() => {
+      if (!autoRefresh) return;
+      countdown--;
+      if (countdown <= 0) {
+        countdown = 20;
+        fetchScan();
+      }
+      document.getElementById('countdownText').textContent = countdown + 's';
+    }, 1000);
+
+    // Initial boot
+    loadConfig();
+    fetchScan();
+  </script>
+</body>
+</html>

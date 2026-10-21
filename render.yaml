@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: solana-degen-sniper
+    env: node
+    plan: free
+    buildCommand: ""
+    startCommand: "node server.js"
+    envVars:
+      - key: DISCORD_WEBHOOK_URL
+        sync: false

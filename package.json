@@ -1,0 +1,13 @@
+{
+  "name": "solana-degen-sniper",
+  "version": "1.0.0",
+  "description": "Solana Degen & Trench Velocity Sniper Scanner (<30m pump.fun/raydium)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}
