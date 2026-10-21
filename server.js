@@ -1392,9 +1392,35 @@ function computePaperSummary() {
   const availableCashUsd = Math.max(0, initialBudgetUsd - totalInvested + list.reduce((acc, s) => acc + (s.realizedUsd || 0), 0));
   const canOpenNewTrade = availableCashUsd >= tradeSizeUsd;
 
+  // Confronto Strategie Dual-Mode (Breakout vs Dip Absorption Reversal)
+  const breakoutTrades = list.filter(s => (s.strategyMode || 'BREAKOUT') === 'BREAKOUT');
+  const reversalTrades = list.filter(s => s.strategyMode === 'REVERSAL');
+
+  const computeSubStats = (trades) => {
+    const total = trades.length;
+    const invested = trades.reduce((acc, s) => acc + (s.tradeSizeUsd || tradeSizeUsd), 0);
+    const pnlUsd = trades.reduce((acc, s) => acc + (s.scalpPnlUsd || 0), 0);
+    const pnlPct = invested > 0 ? (pnlUsd / invested) * 100 : 0;
+    const winners = trades.filter(s => s.tp1Hit || (s.scalpPnlPct ?? 0) >= 8.0).length;
+    const winRate = total > 0 ? Math.round((winners / total) * 100) : 0;
+    return {
+      total,
+      invested: Number(invested.toFixed(2)),
+      pnlUsd: Number(pnlUsd.toFixed(2)),
+      pnlPct: Number(pnlPct.toFixed(1)),
+      winRate,
+      winners
+    };
+  };
+
+  const breakoutStats = computeSubStats(breakoutTrades);
+  const reversalStats = computeSubStats(reversalTrades);
+
   return {
     settings: paperSettings,
     totalTrades,
+    breakoutStats,
+    reversalStats,
     totalFeesPaid: Number(totalFeesPaid.toFixed(2)),
     openTrades: openPositions.length,
     closedTrades: list.filter(s => s.status === 'CLOSED').length,

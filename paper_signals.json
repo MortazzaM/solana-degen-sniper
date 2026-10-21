@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T23:06:53.853Z",
+  "updatedAt": "2026-10-21T23:12:46.006Z",
   "settings": {
     "tradeSizeUsd": 25,
     "initialBudgetUsd": 1000,
@@ -3287,7 +3287,7 @@
       "holdValueUsd": 25.76,
       "holdPnlUsd": 0.76,
       "scalpState": "ACTIVE",
-      "scalpStatusText": "🟢 In corsa Trench (100% • TP1 40% @ +40% • TP2 30% @ +100% • Moon Bag 30% • SL -18%) [Fee/Slip: -$1.58]",
+      "scalpStatusText": "🚀 In corsa Breakout (100% • TP1 40% @ +40% • TP2 30% @ +100% • Moon Bag 30% • SL -18%) [Fee/Slip: -$1.58]",
       "tp1Hit": false,
       "tp2Hit": false,
       "remainingWeight": 1,
