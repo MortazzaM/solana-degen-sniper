@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T23:34:40.037Z",
+  "updatedAt": "2026-10-22T09:58:54.742Z",
   "settings": {
     "tradeSizeUsd": 25,
     "initialBudgetUsd": 1000,
@@ -69,7 +69,7 @@
       },
       "feesPaidUsd": 1.57,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.741Z"
     },
     {
       "mint": "ud4M3i1dycez8U91QekZSokMVgJTM2CWuvpdj5kaoeQ",
@@ -191,7 +191,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "h87aexUtFKuxZKmfyPhc6cA8x898FeXYhKWSZFupump",
@@ -252,7 +252,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "ESwCrBKcfG3spu14aJeEiMg7hw5aEMGj1iXK9UeZKtQf",
@@ -340,7 +340,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2386.11,
+      "currentLiquidityUsd": 2401.82,
       "peakPriceUsd": 0.002449,
       "peakMarketCapUsd": 2436346,
       "peakTimestamp": 1792450967839,
@@ -374,7 +374,7 @@
       },
       "feesPaidUsd": 2.37,
       "currentValueUsd": 59.65,
-      "lastUpdatedAt": "2026-10-21T12:22:17.287Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "BFyLfMLwXZpHSkbQLgGLLPf4tfNhZKQKwd5gFVCMpump",
@@ -435,7 +435,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "7R8MRgqn2rHPh5uwe2UJCtpXjHbofgRvi45rnrjWpump",
@@ -462,14 +462,14 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2628.58,
+      "currentLiquidityUsd": 2552.71,
       "peakPriceUsd": 0.0001421,
       "peakMarketCapUsd": 142160,
       "peakTimestamp": 1792447561059,
-      "lowPriceUsd": 0.000002277,
+      "lowPriceUsd": 0.000002261,
       "pnlPct": -6.44,
       "maxGainPct": 109.88,
-      "maxDrawdownPct": -96.64,
+      "maxDrawdownPct": -96.66,
       "tradeSizeUsd": 25,
       "holdValueUsd": 23.39,
       "holdPnlUsd": -1.61,
@@ -496,7 +496,7 @@
       },
       "feesPaidUsd": 2.41,
       "currentValueUsd": 39.23,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "3mP7uyUpxozTazybGm1qqv8BmhQ2TJ2zSsAnsJUnpump",
@@ -523,7 +523,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2233.59,
+      "currentLiquidityUsd": 2167.13,
       "peakPriceUsd": 0.0003022,
       "peakMarketCapUsd": 302101,
       "peakTimestamp": 1792448686480,
@@ -557,7 +557,7 @@
       },
       "feesPaidUsd": 1.99,
       "currentValueUsd": 33.1,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "5G881aUWzaH5T5SkeNqvAPAHWnYPaVWD434mXCAfpump",
@@ -618,7 +618,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "8JXnou9QLpiJUfbSrh9x1EFpWTsdTsXehMd5ybQ6pump",
@@ -679,7 +679,7 @@
       },
       "feesPaidUsd": 2,
       "currentValueUsd": 31.73,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "7p9A4FUNYFQL9AvKk2xoqwDbskHGbMHaf47S3ue4RwbX",
@@ -801,7 +801,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "8BFNqegDHutAJfVtprTd6ifXBtuWiNq9we6RmWiDpump",
@@ -828,7 +828,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 1996.34,
+      "currentLiquidityUsd": 1990.04,
       "peakPriceUsd": 0.00019571800815259416,
       "peakMarketCapUsd": 192732.9563,
       "peakTimestamp": 1792451512538,
@@ -862,7 +862,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 19.5,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "FFUd9sB1Aehe5aWNX7QkBrJvXPkLvh18RW9iMpqtpump",
@@ -889,7 +889,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2551.79,
+      "currentLiquidityUsd": 2455.59,
       "peakPriceUsd": 0.0005528,
       "peakMarketCapUsd": 549083,
       "peakTimestamp": 1792456939100,
@@ -923,7 +923,7 @@
       },
       "feesPaidUsd": 2.38,
       "currentValueUsd": 40.15,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "Bt3zgdPaN2ZeTqLubYcweq866NoqYXVWMgvWHjTTJS7q",
@@ -1072,7 +1072,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2495.35,
+      "currentLiquidityUsd": 2480.25,
       "peakPriceUsd": 0.0002453,
       "peakMarketCapUsd": 245279,
       "peakTimestamp": 1792457239190,
@@ -1106,7 +1106,7 @@
       },
       "feesPaidUsd": 2.4,
       "currentValueUsd": 42.66,
-      "lastUpdatedAt": "2026-10-21T12:22:17.288Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "6HwJEzvyZttwcjDkDEwDQZHSicFWfz3eqAhxSpwTeeWv",
@@ -1194,14 +1194,14 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2052.73,
+      "currentLiquidityUsd": 1963.21,
       "peakPriceUsd": 0.000185,
       "peakMarketCapUsd": 185095,
       "peakTimestamp": 1792483042809,
-      "lowPriceUsd": 0.000001927,
+      "lowPriceUsd": 0.000001909,
       "pnlPct": -6.32,
       "maxGainPct": 1.87,
-      "maxDrawdownPct": -98.94,
+      "maxDrawdownPct": -98.95,
       "tradeSizeUsd": 25,
       "holdValueUsd": 23.42,
       "holdPnlUsd": -1.58,
@@ -1228,7 +1228,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 0,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "Bdvept1HaYn7DzbEGz1hWFagH7xe7BnE3YwZDbQgvo1E",
@@ -1314,19 +1314,19 @@
         "⚡ Volume Velocity Esplosivo (~$$11.3k/m • $$56.6k/5m)",
         "🔥 Attività Frenetica (115.2 transazioni/min)"
       ],
-      "currentPriceUsd": 0.00129,
-      "currentMarketCapUsd": 1280852,
-      "currentLiquidityUsd": 111148.33,
+      "currentPriceUsd": 0.0003059,
+      "currentMarketCapUsd": 303734,
+      "currentLiquidityUsd": 54475.61,
       "peakPriceUsd": 0.002153,
       "peakMarketCapUsd": 2137884,
       "peakTimestamp": 1792512977028,
       "lowPriceUsd": 0.0002362,
-      "pnlPct": 367.56,
+      "pnlPct": 6.04,
       "maxGainPct": 690.9,
       "maxDrawdownPct": -13.23,
       "tradeSizeUsd": 25,
-      "holdValueUsd": 116.89,
-      "holdPnlUsd": 91.89,
+      "holdValueUsd": 26.51,
+      "holdPnlUsd": 1.51,
       "scalpState": "TP2_TRAILED",
       "scalpStatusText": "🏆 Moon Bag Chiusa da Trailing Stop -35% (TP1 +40% + TP2 2X + Moon Bag a +414%) [Fee/Slip: -$2.38]",
       "tp1Hit": true,
@@ -1350,7 +1350,7 @@
       },
       "feesPaidUsd": 2.38,
       "currentValueUsd": 67.56,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "HoHugVwu7zHAfPojoCiVmzQYX6QacUnH9mBUs5vG6jkr",
@@ -1533,7 +1533,7 @@
       },
       "feesPaidUsd": 2.4,
       "currentValueUsd": 53.43,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "EJTStNvjby1vT9NtFjCsZMukrrEm7XHwbZyrXWiPGMRY",
@@ -1655,7 +1655,7 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 19.55,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T00:50:08.343Z"
     },
     {
       "mint": "Df18xmSEf64DXaKMMfoCrJaEgqBKVc7rXfmKDyagpump",
@@ -1680,9 +1680,9 @@
         "⚡ Volume Velocity Esplosivo (~$$60.6k/m • $$303.0k/5m)",
         "🔥 Attività Frenetica (346.2 transazioni/min)"
       ],
-      "currentPriceUsd": 0.000003111,
-      "currentMarketCapUsd": 3103,
-      "currentLiquidityUsd": 3503.85,
+      "currentPriceUsd": 0.000002956,
+      "currentMarketCapUsd": 2949,
+      "currentLiquidityUsd": 3347.7,
       "peakPriceUsd": 0.0031913428422485875,
       "peakMarketCapUsd": 3017748,
       "peakTimestamp": 1792526406569,
@@ -1716,7 +1716,7 @@
       },
       "feesPaidUsd": 1.57,
       "currentValueUsd": 15.33,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "CojBYYUcrbC6RfjvG6uCdfcMVdpqMnVSCYCjzr3BAL6j",
@@ -1838,7 +1838,7 @@
       },
       "feesPaidUsd": 1.97,
       "currentValueUsd": 31.41,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "3WNuLjzMuUxDDwhoz8pfEQoUy96wNRrrMvcTsbynpump",
@@ -1865,14 +1865,14 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2336.14,
+      "currentLiquidityUsd": 2255.3,
       "peakPriceUsd": 0.0005064,
       "peakMarketCapUsd": 506295,
       "peakTimestamp": 1792518629689,
-      "lowPriceUsd": 0.000002125,
+      "lowPriceUsd": 0.000002095,
       "pnlPct": -6.4,
       "maxGainPct": 432.65,
-      "maxDrawdownPct": -97.76,
+      "maxDrawdownPct": -97.8,
       "tradeSizeUsd": 25,
       "holdValueUsd": 23.4,
       "holdPnlUsd": -1.6,
@@ -1899,7 +1899,7 @@
       },
       "feesPaidUsd": 2.4,
       "currentValueUsd": 54.97,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "BLr7LaB55PLj8DxchLZKRVCtXx7ugzXWiwzpJhVtpump",
@@ -1960,7 +1960,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 10,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T00:14:14.398Z"
     },
     {
       "mint": "6gXN9N4yGwstzHHEABzpkPFWqZfpS9aBqMHewe5Vpump",
@@ -2021,7 +2021,7 @@
       },
       "feesPaidUsd": 1.99,
       "currentValueUsd": 30.87,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T00:50:08.343Z"
     },
     {
       "mint": "5TtNFD1A5X8AZkkDERnwG3aS1eYjFKK1yxc9BmpgM6gk",
@@ -2143,7 +2143,7 @@
       },
       "feesPaidUsd": 1.57,
       "currentValueUsd": 10,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T00:50:08.343Z"
     },
     {
       "mint": "rDMvcyEkds8vLk5Vyag3t93Z5UnGfo9DTN75k7epump",
@@ -2204,7 +2204,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 18.7,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "93iqi7JSBc5jbNWjNZqs7nqFWaEaLzPxmPYLvnVspump",
@@ -2265,7 +2265,7 @@
       },
       "feesPaidUsd": 1.98,
       "currentValueUsd": 29.92,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T00:50:08.343Z"
     },
     {
       "mint": "9SzQ2oUyxALCmbGd3isX9RTaXBWdDpV6B3fK8Tovpump",
@@ -2292,7 +2292,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2602.92,
+      "currentLiquidityUsd": 2569.01,
       "peakPriceUsd": 0.0006954,
       "peakMarketCapUsd": 695411,
       "peakTimestamp": 1792524329759,
@@ -2326,7 +2326,7 @@
       },
       "feesPaidUsd": 2.38,
       "currentValueUsd": 38.92,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "FP9HKxKKzBfQrRJHY5DNoMvNgEqCaMJoKejvtvtopump",
@@ -2353,11 +2353,11 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2715.34,
+      "currentLiquidityUsd": 2646.15,
       "peakPriceUsd": 0.003233659533634447,
       "peakMarketCapUsd": 2966756.32445636,
       "peakTimestamp": 1792536908426,
-      "lowPriceUsd": 0.000002304,
+      "lowPriceUsd": 0.000002266,
       "pnlPct": -6.28,
       "maxGainPct": 467.3,
       "maxDrawdownPct": -99.6,
@@ -2387,7 +2387,7 @@
       },
       "feesPaidUsd": 1.97,
       "currentValueUsd": 30.24,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "FRxrPaW13A6j9a8AgRPb9ko2PvVefxNQrJSmqEPNLrgU",
@@ -2536,14 +2536,14 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2188.23,
+      "currentLiquidityUsd": 2171.05,
       "peakPriceUsd": 0.0002236410944801771,
       "peakMarketCapUsd": 220773.7161,
       "peakTimestamp": 1792532882735,
-      "lowPriceUsd": 0.00000215,
+      "lowPriceUsd": 0.000002133,
       "pnlPct": -6.4,
       "maxGainPct": 199.64,
-      "maxDrawdownPct": -97.12,
+      "maxDrawdownPct": -97.14,
       "tradeSizeUsd": 25,
       "holdValueUsd": 23.4,
       "holdPnlUsd": -1.6,
@@ -2570,7 +2570,7 @@
       },
       "feesPaidUsd": 1.6,
       "currentValueUsd": 14.67,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "2gJBAZVtxFcQzj3NQDKgqKbpECh6epSoq8Mzu4Fupump",
@@ -2597,7 +2597,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2373.13,
+      "currentLiquidityUsd": 2428.14,
       "peakPriceUsd": 0.0003892,
       "peakMarketCapUsd": 385854,
       "peakTimestamp": 1792534557751,
@@ -2631,7 +2631,7 @@
       },
       "feesPaidUsd": 1.98,
       "currentValueUsd": 31.62,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "AjSQ5K3cg27r8jFyEBvY2XneyPRn4vXRt37wA5KNpump",
@@ -2658,14 +2658,14 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2179.73,
+      "currentLiquidityUsd": 2112.87,
       "peakPriceUsd": 0.00015539500564595762,
       "peakMarketCapUsd": 153272,
       "peakTimestamp": 1792534082612,
-      "lowPriceUsd": 0.000002078,
+      "lowPriceUsd": 0.000002031,
       "pnlPct": -6.36,
       "maxGainPct": 14.6,
-      "maxDrawdownPct": -98.47,
+      "maxDrawdownPct": -98.5,
       "tradeSizeUsd": 25,
       "holdValueUsd": 23.41,
       "holdPnlUsd": -1.59,
@@ -2692,7 +2692,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 10,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "ADmo4PzQdTBgsfHad4ZMhy4Nzx7VxMhqkXiHP8kZpump",
@@ -2719,7 +2719,7 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2486.27,
+      "currentLiquidityUsd": 2465.81,
       "peakPriceUsd": 0.006145,
       "peakMarketCapUsd": 6145177,
       "peakTimestamp": 1792534107833,
@@ -2753,7 +2753,7 @@
       },
       "feesPaidUsd": 1.96,
       "currentValueUsd": 35.58,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "FD28DUH1YfkKK2WJ6K79pmAb7zfyPqtYjZF8BfueC9jW",
@@ -2875,7 +2875,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.02,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "HDiyBw9cWAoVugs4tp6p9oZb6MRgw7Vt3UCAwpiJTUmc",
@@ -2980,9 +2980,9 @@
       "tp2Hit": false,
       "remainingWeight": 0,
       "realizedUsd": 14,
-      "scalpValueUsd": 38.36,
-      "scalpPnlUsd": 13.36,
-      "scalpPnlPct": 53.44,
+      "scalpValueUsd": 14,
+      "scalpPnlUsd": -11,
+      "scalpPnlPct": -44,
       "status": "CLOSED",
       "closedAt": "2026-10-21T23:34:40.325Z",
       "notifiedStates": [],
@@ -2996,8 +2996,8 @@
         "bubblemaps": "https://v2.bubblemaps.io/map?address=ChSs74hy8zCfEHkf7VhUwgYuEMKD1Mct2ES8sDker8FS&chain=solana"
       },
       "feesPaidUsd": 1.98,
-      "currentValueUsd": 38.36,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "currentValueUsd": 14,
+      "lastUpdatedAt": "2026-10-22T00:20:24.759Z"
     },
     {
       "mint": "7thgKgtK1rp1UtLpWUZEuu9vakedTMoZzuyps6RGpump",
@@ -3022,16 +3022,16 @@
         "⚡ Volume Velocity Esplosivo (~$$109.2k/m • $$546.1k/5m)",
         "🔥 Attività Frenetica (550.8 transazioni/min)"
       ],
-      "currentPriceUsd": 0.00001884,
-      "currentMarketCapUsd": 18782,
-      "currentLiquidityUsd": 11577.37,
+      "currentPriceUsd": 0.0000146,
+      "currentMarketCapUsd": 14562,
+      "currentLiquidityUsd": 9856.75,
       "peakPriceUsd": 0.013050673031305115,
       "peakMarketCapUsd": 12813459,
       "peakTimestamp": 1792545993189,
-      "lowPriceUsd": 0.00001427,
+      "lowPriceUsd": 0.0000121,
       "pnlPct": -100,
       "maxGainPct": 924.39,
-      "maxDrawdownPct": -98.88,
+      "maxDrawdownPct": -99.05,
       "tradeSizeUsd": 25,
       "holdValueUsd": 0,
       "holdPnlUsd": -25,
@@ -3058,7 +3058,7 @@
       },
       "feesPaidUsd": 1.96,
       "currentValueUsd": 35.85,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "8zemVcC8974xhtHva7wuY64B6viXsfj24b6LH41mpump",
@@ -3083,16 +3083,16 @@
         "⚡ Volume Velocity Esplosivo (~$$7.3k/m • $$36.6k/5m)",
         "🔥 Attività Frenetica (28.8 transazioni/min)"
       ],
-      "currentPriceUsd": 0.000003951,
-      "currentMarketCapUsd": 3816,
-      "currentLiquidityUsd": 3685.04,
+      "currentPriceUsd": 0.000003018,
+      "currentMarketCapUsd": 2915,
+      "currentLiquidityUsd": 2960.61,
       "peakPriceUsd": 0.0001465,
       "peakMarketCapUsd": 146427,
       "peakTimestamp": 1792542327589,
-      "lowPriceUsd": 0.000003071,
+      "lowPriceUsd": 0.000003018,
       "pnlPct": -100,
       "maxGainPct": 24.26,
-      "maxDrawdownPct": -97.4,
+      "maxDrawdownPct": -97.44,
       "tradeSizeUsd": 25,
       "holdValueUsd": 0,
       "holdPnlUsd": -25,
@@ -3121,7 +3121,7 @@
       },
       "feesPaidUsd": 1.59,
       "currentValueUsd": 19.13,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "4VKPhhDDuVRqCSQGTLXj33jK22cmM9KhN62TN5oGpump",
@@ -3184,7 +3184,7 @@
       },
       "feesPaidUsd": 1.98,
       "currentValueUsd": 31.8,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T00:50:08.343Z"
     },
     {
       "mint": "AMuS3KCHeipZwTZmEFRuzW6Dr9YMYksWU8Rgboaupump",
@@ -3211,14 +3211,14 @@
       ],
       "currentPriceUsd": 0,
       "currentMarketCapUsd": 0,
-      "currentLiquidityUsd": 2815.32,
+      "currentLiquidityUsd": 2701.26,
       "peakPriceUsd": 0.0009173,
       "peakMarketCapUsd": 909991,
       "peakTimestamp": 1792548444474,
-      "lowPriceUsd": 0.000002366,
+      "lowPriceUsd": 0.000002286,
       "pnlPct": -6.28,
       "maxGainPct": 80.15,
-      "maxDrawdownPct": -99.54,
+      "maxDrawdownPct": -99.55,
       "tradeSizeUsd": 25,
       "holdValueUsd": 23.43,
       "holdPnlUsd": -1.57,
@@ -3248,7 +3248,7 @@
       },
       "feesPaidUsd": 1.97,
       "currentValueUsd": 33.78,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     },
     {
       "mint": "8rPd2sYtjRXBW7rGwZpA6NxfryXCBj4PgbBavViX4g7f",
@@ -3292,9 +3292,9 @@
       "tp2Hit": false,
       "remainingWeight": 0,
       "realizedUsd": 0,
-      "scalpValueUsd": 25.76,
-      "scalpPnlUsd": 0.76,
-      "scalpPnlPct": 3.04,
+      "scalpValueUsd": 0,
+      "scalpPnlUsd": -25,
+      "scalpPnlPct": -100,
       "status": "CLOSED",
       "closedAt": "2026-10-21T23:34:40.328Z",
       "notifiedStates": [],
@@ -3308,8 +3308,8 @@
         "bubblemaps": "https://v2.bubblemaps.io/map?address=8rPd2sYtjRXBW7rGwZpA6NxfryXCBj4PgbBavViX4g7f&chain=solana"
       },
       "feesPaidUsd": 1.58,
-      "currentValueUsd": 25.76,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "currentValueUsd": 0,
+      "lastUpdatedAt": "2026-10-22T00:41:58.360Z"
     },
     {
       "mint": "4FQ9XQLavgZQkeJFxiCWdEPoH9hgp2kHetrMaaGrpump",
@@ -3334,19 +3334,19 @@
         "⚡ Volume Velocity Esplosivo (~$$21.4k/m • $$107.1k/5m)",
         "🔥 Attività Frenetica (484.2 transazioni/min)"
       ],
-      "currentPriceUsd": 0.0001442,
-      "currentMarketCapUsd": 144242,
-      "currentLiquidityUsd": 31929.16,
+      "currentPriceUsd": 0,
+      "currentMarketCapUsd": 0,
+      "currentLiquidityUsd": 2124.87,
       "peakPriceUsd": 0.00018564637108633685,
       "peakMarketCapUsd": 180578,
       "peakTimestamp": 1792625127548,
-      "lowPriceUsd": 0.0001133,
-      "pnlPct": -26.44,
+      "lowPriceUsd": 0.000001995,
+      "pnlPct": -6.32,
       "maxGainPct": 2.85,
-      "maxDrawdownPct": -37.23,
+      "maxDrawdownPct": -98.89,
       "tradeSizeUsd": 25,
-      "holdValueUsd": 18.39,
-      "holdPnlUsd": -6.61,
+      "holdValueUsd": 23.42,
+      "holdPnlUsd": -1.58,
       "strategyMode": "BREAKOUT",
       "dipMetrics": null,
       "scalpState": "STOPPED_OUT",
@@ -3374,7 +3374,203 @@
       },
       "feesPaidUsd": 1.58,
       "currentValueUsd": 15.69,
-      "lastUpdatedAt": "2026-10-21T23:34:40.037Z"
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
+    },
+    {
+      "mint": "HVBXp1v8jGWxxed866eV7UHuhJt5JqBJtMrof5DPpump",
+      "pairAddress": "BT85TjhVKF4LSH753AQ144X8FbgoPTqwiShprXoiyjGq",
+      "symbol": "CYBERCAT",
+      "name": "CYBERCAT",
+      "imageUrl": "https://assets.geckoterminal.com/0p0mtv9vd3tebmndbcftl0ndxg16",
+      "dexId": "pumpswap",
+      "category": "DEGEN-TRENCH",
+      "verdict": "🚀 MOMENTUM BREAKOUT",
+      "ageAtSignalHours": 0.1,
+      "isManual": false,
+      "signalTime": "2026-10-21T23:46:07.577Z",
+      "signalTimestamp": 1792626367577,
+      "entryScore": 99,
+      "entryPriceUsd": 0.00029197774284828713,
+      "entryMarketCapUsd": 274617.410447194,
+      "entryLiquidityUsd": 43852.6201,
+      "entrySignals": [
+        "🚀 Buy Dominance Estrema (83% Buys • 1995B/418S)",
+        "🔥 Super Fresh Trench (6m fa • Blocco Iniziale)",
+        "⚡ Volume Velocity Esplosivo (~$$44.0k/m • $$220.1k/5m)",
+        "🔥 Attività Frenetica (482.6 transazioni/min)"
+      ],
+      "currentPriceUsd": 0,
+      "currentMarketCapUsd": 0,
+      "currentLiquidityUsd": 2387.43,
+      "peakPriceUsd": 0.0004331,
+      "peakMarketCapUsd": 433101,
+      "peakTimestamp": 1792626692442,
+      "lowPriceUsd": 0.000002131,
+      "pnlPct": -6.32,
+      "maxGainPct": 48.33,
+      "maxDrawdownPct": -99.27,
+      "tradeSizeUsd": 25,
+      "holdValueUsd": 23.42,
+      "holdPnlUsd": -1.58,
+      "strategyMode": "BREAKOUT",
+      "dipMetrics": null,
+      "scalpState": "TP1_PROTECTED",
+      "scalpStatusText": "✅ Posizione Chiusa da Trailing Stop (TP1 +40% + 60% protetto a +11%) [Fee/Slip: -$1.98]",
+      "tp1Hit": true,
+      "tp2Hit": false,
+      "remainingWeight": 0,
+      "realizedUsd": 30.69,
+      "scalpValueUsd": 30.69,
+      "scalpPnlUsd": 5.69,
+      "scalpPnlPct": 22.76,
+      "status": "CLOSED",
+      "closedAt": "2026-10-21T23:52:35.112Z",
+      "notifiedStates": [
+        "TP1_HIT",
+        "TP1_PROTECTED"
+      ],
+      "links": {
+        "bullx": "https://bullx.io/terminal?chainId=1399811149&address=HVBXp1v8jGWxxed866eV7UHuhJt5JqBJtMrof5DPpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/BT85TjhVKF4LSH753AQ144X8FbgoPTqwiShprXoiyjGq",
+        "gmgn": "https://gmgn.ai/sol/token/HVBXp1v8jGWxxed866eV7UHuhJt5JqBJtMrof5DPpump",
+        "pumpfun": "https://pump.fun/coin/HVBXp1v8jGWxxed866eV7UHuhJt5JqBJtMrof5DPpump",
+        "dexscreener": "https://dexscreener.com/solana/BT85TjhVKF4LSH753AQ144X8FbgoPTqwiShprXoiyjGq",
+        "rugcheck": "https://rugcheck.xyz/tokens/HVBXp1v8jGWxxed866eV7UHuhJt5JqBJtMrof5DPpump",
+        "bubblemaps": "https://v2.bubblemaps.io/map?address=HVBXp1v8jGWxxed866eV7UHuhJt5JqBJtMrof5DPpump&chain=solana"
+      },
+      "feesPaidUsd": 1.98,
+      "currentValueUsd": 30.69,
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
+    },
+    {
+      "mint": "KihGKfriB6eMvEL3bXE3ZMu2qnBgsXJZDotuGoJpump",
+      "pairAddress": "9te4FQgdQ9PfaXBMQiQNp2DLt1s3gCkEuwVbYBMpGMp1",
+      "symbol": "BIKECHI",
+      "name": "BIKEchi",
+      "imageUrl": "https://assets.geckoterminal.com/uxd4zablsugzt5js7rwraexrvv5r",
+      "dexId": "pumpswap",
+      "category": "DEGEN-TRENCH",
+      "verdict": "🎯 DIP ABSORPTION",
+      "ageAtSignalHours": 0.87,
+      "isManual": false,
+      "signalTime": "2026-10-22T09:29:19.783Z",
+      "signalTimestamp": 1792661359783,
+      "entryScore": 99,
+      "entryPriceUsd": 0.00037995446056246,
+      "entryMarketCapUsd": 392136.571087157,
+      "entryLiquidityUsd": 55752.6114,
+      "entrySignals": [
+        "🎯 Golden Pocket Absorption (Dump -35.1% • Rimbalzo +9.7% • Liq intatta)",
+        "📈 Buy Ratio Positivo (61% Buys)",
+        "⚡ Volume Velocity Esplosivo (~$$18.7k/m • $$93.7k/5m)",
+        "🔥 Attività Frenetica (156.4 transazioni/min)"
+      ],
+      "currentPriceUsd": 0.0002196,
+      "currentMarketCapUsd": 214711,
+      "currentLiquidityUsd": 44278.74,
+      "peakPriceUsd": 0.0005048,
+      "peakMarketCapUsd": 493482,
+      "peakTimestamp": 1792661984500,
+      "lowPriceUsd": 0.00021557897436009745,
+      "pnlPct": -48.48,
+      "maxGainPct": 32.86,
+      "maxDrawdownPct": -43.26,
+      "tradeSizeUsd": 25,
+      "holdValueUsd": 12.88,
+      "holdPnlUsd": -12.12,
+      "strategyMode": "REVERSAL",
+      "dipMetrics": null,
+      "scalpState": "STOPPED_OUT",
+      "scalpStatusText": "🛑 Stop Loss (-30.6% Eseguito) [Fee/Slip: -$1.57]",
+      "tp1Hit": false,
+      "tp2Hit": false,
+      "remainingWeight": 0,
+      "realizedUsd": 17.35,
+      "scalpValueUsd": 17.35,
+      "scalpPnlUsd": -7.65,
+      "scalpPnlPct": -30.6,
+      "status": "CLOSED",
+      "closedAt": "2026-10-22T09:53:04.990Z",
+      "notifiedStates": [
+        "STOPPED_OUT"
+      ],
+      "links": {
+        "bullx": "https://bullx.io/terminal?chainId=1399811149&address=KihGKfriB6eMvEL3bXE3ZMu2qnBgsXJZDotuGoJpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/9te4FQgdQ9PfaXBMQiQNp2DLt1s3gCkEuwVbYBMpGMp1",
+        "gmgn": "https://gmgn.ai/sol/token/KihGKfriB6eMvEL3bXE3ZMu2qnBgsXJZDotuGoJpump",
+        "pumpfun": "https://pump.fun/coin/KihGKfriB6eMvEL3bXE3ZMu2qnBgsXJZDotuGoJpump",
+        "dexscreener": "https://dexscreener.com/solana/9te4FQgdQ9PfaXBMQiQNp2DLt1s3gCkEuwVbYBMpGMp1",
+        "rugcheck": "https://rugcheck.xyz/tokens/KihGKfriB6eMvEL3bXE3ZMu2qnBgsXJZDotuGoJpump",
+        "bubblemaps": "https://v2.bubblemaps.io/map?address=KihGKfriB6eMvEL3bXE3ZMu2qnBgsXJZDotuGoJpump&chain=solana"
+      },
+      "feesPaidUsd": 1.57,
+      "currentValueUsd": 17.35,
+      "lastUpdatedAt": "2026-10-22T09:58:29.704Z"
+    },
+    {
+      "mint": "Bg3chyjU7jrBTAN1HcVceZiQS6dYJ1n5WD1GBTGjpump",
+      "pairAddress": "F2PrFvWSCuC9aVRv6G1VeZmYpAocg5tpPJxVisF634Cr",
+      "symbol": "CYBERDACITY",
+      "name": "Cyber Dacity Coin",
+      "imageUrl": "https://assets.geckoterminal.com/5tw5lcnp8t0yx7wus9d941xew7ho",
+      "dexId": "pumpswap",
+      "category": "DEGEN-TRENCH",
+      "verdict": "🚀 MOMENTUM BREAKOUT",
+      "ageAtSignalHours": 0.2,
+      "isManual": false,
+      "signalTime": "2026-10-22T09:31:24.526Z",
+      "signalTimestamp": 1792661484526,
+      "entryScore": 99,
+      "entryPriceUsd": 0.000159751973401117,
+      "entryMarketCapUsd": 155167.094531904,
+      "entryLiquidityUsd": 32258.0158,
+      "entrySignals": [
+        "🟢 Forte Pressione Acquisti (77% Buys)",
+        "🔥 Super Fresh Trench (12m fa • Blocco Iniziale)",
+        "⚡ Volume Velocity Esplosivo (~$$11.1k/m • $$55.5k/5m)",
+        "🔥 Attività Frenetica (198.2 transazioni/min)"
+      ],
+      "currentPriceUsd": 0.0001935,
+      "currentMarketCapUsd": 190645,
+      "currentLiquidityUsd": 36455.17,
+      "peakPriceUsd": 0.0002352,
+      "peakMarketCapUsd": 246580.564767151,
+      "peakTimestamp": 1792662284549,
+      "lowPriceUsd": 0.00014,
+      "pnlPct": 14.8,
+      "maxGainPct": 47.23,
+      "maxDrawdownPct": -12.36,
+      "tradeSizeUsd": 25,
+      "holdValueUsd": 28.7,
+      "holdPnlUsd": 3.7,
+      "strategyMode": "BREAKOUT",
+      "dipMetrics": null,
+      "scalpState": "TP1_HIT",
+      "scalpStatusText": "🎯 TP1 Preso (+40% su 40%) • 60% in corsa (SL a pareggio) [Fee/Slip: -$1.98]",
+      "tp1Hit": true,
+      "tp2Hit": false,
+      "remainingWeight": 0.6,
+      "realizedUsd": 14,
+      "scalpValueUsd": 30.19,
+      "scalpPnlUsd": 5.19,
+      "scalpPnlPct": 20.76,
+      "status": "OPEN",
+      "closedAt": null,
+      "notifiedStates": [
+        "TP1_HIT"
+      ],
+      "links": {
+        "bullx": "https://bullx.io/terminal?chainId=1399811149&address=Bg3chyjU7jrBTAN1HcVceZiQS6dYJ1n5WD1GBTGjpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/F2PrFvWSCuC9aVRv6G1VeZmYpAocg5tpPJxVisF634Cr",
+        "gmgn": "https://gmgn.ai/sol/token/Bg3chyjU7jrBTAN1HcVceZiQS6dYJ1n5WD1GBTGjpump",
+        "pumpfun": "https://pump.fun/coin/Bg3chyjU7jrBTAN1HcVceZiQS6dYJ1n5WD1GBTGjpump",
+        "dexscreener": "https://dexscreener.com/solana/F2PrFvWSCuC9aVRv6G1VeZmYpAocg5tpPJxVisF634Cr",
+        "rugcheck": "https://rugcheck.xyz/tokens/Bg3chyjU7jrBTAN1HcVceZiQS6dYJ1n5WD1GBTGjpump",
+        "bubblemaps": "https://v2.bubblemaps.io/map?address=Bg3chyjU7jrBTAN1HcVceZiQS6dYJ1n5WD1GBTGjpump&chain=solana"
+      },
+      "feesPaidUsd": 1.98,
+      "currentValueUsd": 30.19,
+      "lastUpdatedAt": "2026-10-22T09:58:54.742Z"
     }
   ]
 }

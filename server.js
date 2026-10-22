@@ -402,20 +402,20 @@ function evaluateDegenSniperPipeline(token) {
       ? Math.max(0, ((track.peakLiq - liq) / track.peakLiq) * 100) 
       : 0;
 
-    // Regola Grok/Gemini Post-Dump High Conviction:
-    // 1. Dump min: -38%, Dump max: -60% dal picco (Golden Pocket)
-    // 2. Higher Low: rimbalzo confermato >= +4.5% sopra il minimo del dump
+    // Regola Grok/Gemini Post-Dump Calibrata (Finestra Operativa Ricalibrata):
+    // 1. Dump tra -35% e -62% dal picco (Golden Pocket)
+    // 2. Higher Low: rimbalzo confermato >= +3.0% sopra il minimo del dump
     // 3. Pool Liquidity Drop <= 25% rispetto al picco (Guardrail anti-drain)
-    // 4. Buy Ratio recente >= 58% (Buy/Sell >= 1.38x, buy dominance netta)
-    // 5. Volume Velocity solido (vol5m >= $15k o vol1mEst >= $3k)
+    // 4. Buy Ratio recente >= 55% (Buy/Sell >= 1.25x)
+    // 5. Volume 5m >= $7.5k o vol1mEst >= $1.5k
     // 6. Liquidità minima >= $20,000
-    // 7. Finestra di maturazione trench tra 6m e 55m
+    // 7. Finestra trench tra 5m e 42m
     const inGoldenPocket = (maxDumpFromPeakPct <= -35 && maxDumpFromPeakPct >= -65) || (curDumpFromPeakPct <= -35 && curDumpFromPeakPct >= -65);
-    const hasHigherLow = bounceFromLowPct >= 4.5 && curPrice > track.lowPriceAfterPeak;
+    const hasHigherLow = bounceFromLowPct >= 3.0 && curPrice > track.lowPriceAfterPeak;
     const liqPreserved = liqDropPct <= 25.0;
-    const buyDominance = buyRatio5m >= 58;
+    const buyDominance = buyRatio5m >= 55;
 
-    if (inGoldenPocket && hasHigherLow && liqPreserved && buyDominance && ageMinutes >= 6 && ageMinutes <= 55 && liq >= 20000) {
+    if (inGoldenPocket && hasHigherLow && liqPreserved && buyDominance && ageMinutes >= 5 && ageMinutes <= 42 && liq >= 20000) {
       isDipAbsorption = true;
       dipDetails = {
         maxDumpPct: Number(maxDumpFromPeakPct.toFixed(1)),
@@ -458,20 +458,23 @@ function evaluateDegenSniperPipeline(token) {
     rejectionReasons.push(`Attività insufficiente per Breakout: solo ${velocityPerMin} tx/min (< 40 tx/min)`);
   }
 
-  // FILTRI VOLUME TRENCH VELOCITY D'ÉLITE:
-  // 1) Volume 5m Minimo: almeno $12,000 scambiati negli ultimi 5 minuti
-  if (vol5m < 12000) {
-    rejectionReasons.push(`Volume 5m troppo debole ($${formatUsd(vol5m)} < $12.0k) — Il token non sta girando forte`);
+  // FILTRI VOLUME (Differenziati per Breakout vs Dip Absorption):
+  // Per Breakout: vol5m >= $12k, vol1mEst >= $2.4k, turnover >= 35%
+  // Per Dip Absorption: durante l'assorbimento il volume si calma: vol5m >= $7.5k e turnover >= 18%
+  const minVol5m = isDipAbsorption ? 7500 : 12000;
+  const minVol1m = isDipAbsorption ? 1500 : 2400;
+  const minTurnover = isDipAbsorption ? 0.18 : 0.35;
+
+  if (vol5m < minVol5m) {
+    rejectionReasons.push(`Volume 5m troppo debole ($${formatUsd(vol5m)} < $${(minVol5m/1000).toFixed(1)}k) — Flusso insufficiente`);
   }
 
-  // 2) Volume Velocity 1m Minima: almeno $2,400/min di flusso stimato
-  if (vol1mEst < 2400) {
-    rejectionReasons.push(`Volume Velocity 1m insufficiente (~$${formatUsd(vol1mEst)}/m < $2.4k/m)`);
+  if (vol1mEst < minVol1m) {
+    rejectionReasons.push(`Volume Velocity 1m insufficiente (~$${formatUsd(vol1mEst)}/m < $${(minVol1m/1000).toFixed(1)}k/m)`);
   }
 
-  // 3) Turnover Ratio: il volume 5m deve essere almeno il 35% della liquidità totale della pool
-  if (volToLiq5m < 0.35) {
-    rejectionReasons.push(`Turnover Volume/Liquidità basso (${Math.round(volToLiq5m * 100)}% < 35%) — Flusso di cassa stagnante`);
+  if (volToLiq5m < minTurnover) {
+    rejectionReasons.push(`Turnover Volume/Liquidità basso (${Math.round(volToLiq5m * 100)}% < ${Math.round(minTurnover * 100)}%) — Flusso di cassa stagnante`);
   }
 
   // 1) Filtro Anti-Rug Dev EOA: se un singolo wallet detiene > 12%, scartato all'istante
