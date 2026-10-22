@@ -348,6 +348,65 @@ async function getFullRugCheckAudit(mint, pairAddress) {
   return audit;
 }
 
+// =========================================================================
+// NARRATIVE & META RADAR CLASSIFIER (Framework Miles Deutscher)
+// Mappa le narrative dominanti di Crypto Twitter e Pump.fun da Name, Symbol e Description
+// =========================================================================
+function classifyTokenNarrative(token) {
+  const text = `${token.symbol || ''} ${token.name || ''} ${token.description || ''}`.toLowerCase();
+  
+  // 1. AI Agents & Autonomous Bots (Meta Caldo CT)
+  const aiKeywords = ['ai', 'agent', 'bot', 'gpt', 'llm', 'neural', 'deepseek', 'claude', 'terminal', 'compute', 'virtual', 'mind', 'synth', 'brain', 'matrix', 'intel', 'auton'];
+  if (aiKeywords.some(kw => text.includes(kw))) {
+    return { tag: '#AI-AGENT', label: '🤖 AI Agent / Tech Meta', boost: 8, isHot: true };
+  }
+
+  // 2. Meme Animals & Pets (Meta Ciclico Virale Solana)
+  const animalKeywords = ['dog', 'cat', 'inu', 'shib', 'pepe', 'frog', 'wif', 'bonk', 'duck', 'pika', 'bear', 'bull', 'ape', 'monkey', 'hamster', 'fish', 'kitty', 'puppy', 'milo'];
+  if (animalKeywords.some(kw => text.includes(kw))) {
+    return { tag: '#MEME-ANIMAL', label: '🐶 Meme Animal / Viral Meta', boost: 6, isHot: true };
+  }
+
+  // 3. Cult / Pol / Celebrities Meta (Pop Culture Hype)
+  const cultKeywords = ['trump', 'elon', 'musk', 'chad', 'wojak', 'fart', 'based', 'kamala', 'tate', 'boobs', 'sex', 'president', 'maga', 'barron'];
+  if (cultKeywords.some(kw => text.includes(kw))) {
+    return { tag: '#CULT-VIRAL', label: '🧬 CT Cult & Pop Culture', boost: 5, isHot: false };
+  }
+
+  // 4. DeFi / Utility / Solana Infra
+  const defiKeywords = ['swap', 'dex', 'sol', 'yield', 'vault', 'stake', 'pay', 'bridge', 'layer', 'dao', 'pool'];
+  if (defiKeywords.some(kw => text.includes(kw))) {
+    return { tag: '#DEFI-INFRA', label: '⚡ DeFi / Solana Utility', boost: 4, isHot: false };
+  }
+
+  return { tag: '#DEGEN-TRENCH', label: '🎲 Degen Trench Standard', boost: 0, isHot: false };
+}
+
+// =========================================================================
+// TRAJECTORY FAN & REGIME PREDICTOR (Framework Kronos)
+// Analizza la consistenza direzionale dei tick di prezzo (Trending vs Choppy)
+// =========================================================================
+function evaluateTrajectoryRegime(track) {
+  if (!track || !track.samples || track.samples.length < 4) {
+    return { regime: 'DEVELOPING', consistencyPct: 50, isChoppy: false };
+  }
+  const samples = track.samples;
+  let upMoves = 0;
+  let downMoves = 0;
+  for (let i = 1; i < samples.length; i++) {
+    if (samples[i].price > samples[i - 1].price) upMoves++;
+    else if (samples[i].price < samples[i - 1].price) downMoves++;
+  }
+  const total = upMoves + downMoves;
+  const consistencyPct = total > 0 ? Math.round((upMoves / total) * 100) : 50;
+
+  // Se i movimenti sono bilanciati 50-50 con frequenti inversioni, è CHOPPY (wash trading / fakeout)
+  const isChoppy = consistencyPct >= 40 && consistencyPct <= 58 && total >= 5;
+  const regime = consistencyPct >= 65 ? 'TRENDING' : isChoppy ? 'CHOPPY' : 'CONSOLIDATION';
+
+  return { regime, consistencyPct, isChoppy };
+}
+
 /**
  * DEGEN TRENCH VELOCITY PIPELINE (<30m pump.fun / raydium)
  * - Cattura token appena nati (< 15-30 minuti di vita)
@@ -390,6 +449,8 @@ function evaluateDegenSniperPipeline(token) {
   const track = trackTokenPriceHistory(token);
   let isDipAbsorption = false;
   let dipDetails = null;
+  const narrative = classifyTokenNarrative(token);
+  const trajectory = evaluateTrajectoryRegime(track);
 
   if (track && track.peakPrice > 0 && track.lowPriceAfterPeak > 0) {
     const curPrice = token.priceUsd;
@@ -656,6 +717,35 @@ function evaluateDegenSniperPipeline(token) {
     warnings.push(`⚠️ Già pumpato +${chg5m.toFixed(0)}% in 5m (rischio ritracciamento)`);
   }
 
+  // 6. CONFLUENZA MULTI-TIMEFRAME (1m Trigger + 5m Trend + 15m/1h Structure):
+  const tf1mAligned = (buyRatio5m >= 55 && vol1mEst >= 1500);
+  const tf5mAligned = (chg5m >= -2.0 && buyRatio5m >= 55);
+  const tf15mAligned = (chg1h >= -30.0 || isDipAbsorption);
+  const isMultiTfConfluent = tf1mAligned && tf5mAligned && tf15mAligned;
+
+  if (isMultiTfConfluent) {
+    score += 8;
+    signals.unshift('⚡ Confluenza Multi-Timeframe Allineata (1m/5m/15m)');
+  }
+
+  // 7. NARRATIVE & META RADAR (Miles Deutscher Framework)
+  if (narrative.isHot) {
+    score += narrative.boost;
+    signals.push(`🔥 Narrativa Calda: ${narrative.label} (${narrative.tag})`);
+  } else if (narrative.boost > 0) {
+    score += narrative.boost;
+    signals.push(`🏷️ Meta: ${narrative.label} (${narrative.tag})`);
+  }
+
+  // 8. TRAJECTORY FAN & REGIME PREDICTOR (Kronos Framework)
+  if (trajectory.regime === 'TRENDING') {
+    score += 6;
+    signals.push(`📈 Traiettoria Direzionale Consistente (${trajectory.consistencyPct}% Up Ticks)`);
+  } else if (trajectory.isChoppy && !isDipAbsorption) {
+    warnings.push('⚠️ Traiettoria Choppy: oscillazioni frammentate (possibile wash trading)');
+    score -= 8;
+  }
+
   // =========================================================================
   // ASSEGNAZIONE VERDETTO DEGEN
   // =========================================================================
@@ -708,6 +798,9 @@ function evaluateDegenSniperPipeline(token) {
     category: 'DEGEN-TRENCH',
     strategyMode,
     dipDetails,
+    narrative,
+    trajectory,
+    isMultiTfConfluent,
     ageMinutes,
     ageHours,
     isMature24h: false,
@@ -1071,7 +1164,73 @@ function evaluateScalpLadderOnSignal(sig, liveTxns1h = null) {
   }
 }
 
-// Helper per notificare su Discord eventi operativi (TP1 +30%, TP2 +70%, Stop Loss -10%)
+// =========================================================================
+// DISCORD WEBHOOK QUEUE & AUTO-RETRY DISPATCHER (Rate-Limit Safe)
+// =========================================================================
+let discordSendQueue = Promise.resolve();
+
+async function postToDiscordWithRetry(payload, maxRetries = 2) {
+  if (!discordConfig.webhookUrl || !discordConfig.webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+    return { ok: false, error: 'Webhook URL non valido' };
+  }
+  if (!discordConfig.enabled) {
+    return { ok: false, error: 'Discord non abilitato' };
+  }
+
+  // Esecuzione sequenziale FIFO per azzerare i burst e i conflitti di rate-limit Discord
+  return new Promise((resolve) => {
+    discordSendQueue = discordSendQueue.then(async () => {
+      let attempts = 0;
+      while (attempts <= maxRetries) {
+        attempts++;
+        try {
+          const res = await fetch(discordConfig.webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (res.status === 429) {
+            let retryAfterMs = 1200;
+            try {
+              const data = await res.json();
+              if (data && data.retry_after) {
+                retryAfterMs = Math.ceil(data.retry_after * 1000) + 200;
+              }
+            } catch (_) {}
+            console.warn(`[DISCORD 429] Rate limit rilevato. Attesa ${retryAfterMs}ms prima del retry ${attempts}/${maxRetries}...`);
+            await new Promise(r => setTimeout(r, retryAfterMs));
+            continue;
+          }
+
+          if (res.status >= 200 && res.status < 300) {
+            // Pacing prudenziale di 600ms tra notifiche consecutive per non saturare la quota webhook
+            await new Promise(r => setTimeout(r, 600));
+            resolve({ ok: true, status: res.status });
+            return;
+          }
+
+          console.error(`[DISCORD ERROR] HTTP ${res.status}`);
+          if (attempts > maxRetries) {
+            resolve({ ok: false, error: `HTTP ${res.status}` });
+            return;
+          }
+          await new Promise(r => setTimeout(r, 800));
+        } catch (err) {
+          console.error(`[DISCORD FETCH ERROR] tentativo ${attempts}:`, err.message);
+          if (attempts > maxRetries) {
+            resolve({ ok: false, error: err.message });
+            return;
+          }
+          await new Promise(r => setTimeout(r, 800));
+        }
+      }
+      resolve({ ok: false, error: 'Max retries superati' });
+    });
+  });
+}
+
+// Helper per notificare su Discord eventi operativi (TP1 +40%, TP2 +100%, Stop Loss, Trailing)
 async function sendDiscordTradeEvent(sig, fromState, toState) {
   if (!discordConfig.webhookUrl || !discordConfig.webhookUrl.startsWith('https://discord.com/api/webhooks/')) return;
   if (!discordConfig.enabled) return;
@@ -1151,16 +1310,13 @@ async function sendDiscordTradeEvent(sig, fromState, toState) {
 
   try {
     console.log(`[DISCORD] Invio evento ${toState} per ${sig.symbol} su webhook...`);
-    const res = await fetch(discordConfig.webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: 'Solana Trade Manager 🎯',
-        embeds: [embed]
-      })
-    });
-    console.log(`[DISCORD] Risposta evento ${toState} per ${sig.symbol}: HTTP ${res.status}`);
-    if (res.status >= 200 && res.status < 300) {
+    const res = await postToDiscordWithRetry({
+      username: 'Solana Trade Manager 🎯',
+      content: `\`${sig.mint}\``,
+      embeds: [embed]
+    }, 2);
+    console.log(`[DISCORD] Risposta evento ${toState} per ${sig.symbol}:`, res.ok ? 'OK' : res.error);
+    if (res.ok) {
       sig.notifiedStates.push(toState);
       savePaperSignals();
     }
@@ -1255,22 +1411,11 @@ async function sendHourlyPerformanceReport(isManualTrigger = false) {
     timestamp: new Date().toISOString()
   };
 
-  try {
-    console.log('[DISCORD] Invio report periodico delle prestazioni su webhook...');
-    const res = await fetch(discordConfig.webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: 'Solana Degen Sniper 🚀',
-        embeds: [embed]
-      })
-    });
-    console.log(`[DISCORD] Risposta report orario: HTTP ${res.status}`);
-    return { ok: res.status >= 200 && res.status < 300, status: res.status };
-  } catch (err) {
-    console.error('[DISCORD ERROR] Errore invio report orario:', err.message);
-    return { ok: false, error: err.message };
-  }
+  console.log('[DISCORD] Invio report periodico delle prestazioni su webhook...');
+  return await postToDiscordWithRetry({
+    username: 'Solana Degen Sniper 🚀',
+    embeds: [embed]
+  }, 2);
 }
 
 // All'avvio manteniamo nel Paper Wallet solo i segnali storici che rispettavano i 5 Pilastri On-Chain (≥30 Buyer 5m, Organic Score >= 42, Bot <= 28%, No Sybil Bundle)
@@ -1460,17 +1605,18 @@ async function sendDiscordTokenAlert(token, isTest = false) {
 
   const isReversal = token.strategyMode === 'REVERSAL' || token.verdict?.includes('DIP');
   const embedColor = isReversal ? 0x10b981 : (token.verdictCode === 'ENTRY' ? 0xff0055 : 0xf59e0b);
+  const narrativeTag = token.narrative?.tag ? ` [${token.narrative.tag}]` : '';
 
   const ladderText = isReversal
     ? '**TP1:** +35% (Vende 40% • SL a pareggio)\n**TP2:** +85% (Vende 30% ATH Re-test • 30% Moon Bag)\n**Stop Loss:** **-14%** (Invalidazione floor dip)'
     : '**TP1:** +40% (Vende 40% • SL a pareggio)\n**TP2:** +100% (Vende 30% 2X • 30% Moon Bag)\n**Stop Loss:** **-18%** (Grace period 90s)';
 
   const embed = {
-    title: `${isTest ? '🧪 [TEST] ' : ''}${token.verdict} — ${token.symbol} (${token.ageMinutes || 1}m fa) • Score ${token.prePumpScore}/100`,
+    title: `${isTest ? '🧪 [TEST] ' : ''}${token.verdict} — ${token.symbol}${narrativeTag} (${token.ageMinutes || 1}m fa) • Score ${token.prePumpScore}/100`,
     url: token.links?.bullx || token.links?.gmgn || `https://gmgn.ai/sol/token/${token.mint}`,
     color: embedColor,
     thumbnail: token.imageUrl ? { url: token.imageUrl } : undefined,
-    description: `**Motivo:** ${token.primaryReason}\n**Mint:** \`${token.mint}\``,
+    description: `**Motivo:** ${token.primaryReason}`,
     fields: [
       {
         name: '⏱️ Età & Launchpad',
@@ -1490,8 +1636,8 @@ async function sendDiscordTokenAlert(token, isTest = false) {
         inline: true
       },
       {
-        name: '🧠 Smart Wallets & Blocco 0/1',
-        value: `**Smart Wallets:** ${token.smartMoneyText}\n**Top 10 EOA:** ${sec.top10EoaPct ?? 'N/D'}%\n**Avvisi:** ${token.warnings?.length ? token.warnings[0] : 'Nessuno'}`,
+        name: '🧠 Smart Wallets & Narrativa CT',
+        value: `**Smart Wallets:** ${token.smartMoneyText}\n**Narrativa:** ${token.narrative?.label || 'Degen Trench'} (${token.narrative?.tag || '#DEGEN'})\n**Regime Kronos:** ${token.trajectory?.regime || 'DEVELOPING'}${token.isMultiTfConfluent ? ' • ⚡ MTF 1m/5m/15m' : ''}\n**Top 10 EOA:** ${sec.top10EoaPct ?? 'N/D'}%`,
         inline: true
       },
       {
@@ -1511,20 +1657,13 @@ async function sendDiscordTokenAlert(token, isTest = false) {
     timestamp: new Date().toISOString()
   };
 
-  try {
-    const res = await fetch(discordConfig.webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: 'Solana Degen Sniper 🚀',
-        embeds: [embed]
-      })
-    });
-    if (!res.ok) return { ok: false, error: `Discord HTTP ${res.status}` };
-    return { ok: true };
-  } catch (err) {
-    return { ok: false, error: err.message };
-  }
+  const payload = {
+    username: 'Solana Degen Sniper 🚀',
+    content: `\`${token.mint}\``,
+    embeds: [embed]
+  };
+
+  return await postToDiscordWithRetry(payload, 2);
 }
 
 function parseGeckoPool(pool, includedMap) {
@@ -2011,10 +2150,18 @@ async function scanSolanaFourPhases() {
       const symUpper = (t.symbol || '').toUpperCase().trim();
       if (alertSentThisBatch.has(symUpper)) continue; // mai più di un alert per lo stesso ticker nello stesso scan
 
-      sentDiscordMints.add(t.mint);
       alertSentThisBatch.add(symUpper);
-      saveDiscordConfig();
-      sendDiscordTokenAlert(t, false).catch(() => {});
+      try {
+        const res = await sendDiscordTokenAlert(t, false);
+        if (res && res.ok) {
+          sentDiscordMints.add(t.mint);
+          saveDiscordConfig();
+        } else {
+          console.warn(`[DISCORD ALERT RETRY LATER] Alert per ${t.symbol} non confermato (${res?.error || 'HTTP error'}) — verrà ritentato`);
+        }
+      } catch (alertErr) {
+        console.error(`[DISCORD ALERT EXC]`, alertErr.message);
+      }
     }
   }
 
