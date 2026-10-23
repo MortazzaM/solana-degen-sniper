@@ -476,7 +476,7 @@ function evaluateDegenSniperPipeline(token) {
     const liqPreserved = liqDropPct <= 25.0;
     const buyDominance = buyRatio5m >= 55;
 
-    if (inGoldenPocket && hasHigherLow && liqPreserved && buyDominance && ageMinutes >= 5 && ageMinutes <= 42 && liq >= 20000) {
+    if (inGoldenPocket && hasHigherLow && liqPreserved && buyDominance && ageMinutes >= 5 && ageMinutes <= 4320 && liq >= 20000) {
       isDipAbsorption = true;
       dipDetails = {
         maxDumpPct: Number(maxDumpFromPeakPct.toFixed(1)),
@@ -492,10 +492,18 @@ function evaluateDegenSniperPipeline(token) {
   const warnings = [];
 
   // =========================================================================
-  // FILTRI DEGEN: MINIMALISTI E SENZA BLOCCHI RIGIDI DI SICUREZZA
+  // FILTRI SCHELLING & GCR REFLEXIVITY ($45k - $15M)
   // =========================================================================
-  if (ageMinutes > 60) {
-    rejectionReasons.push(`Età > 60m (${ageMinutes}m) — Fuori dalla finestra Degen Trench (<30m)`);
+  if (fdv < 45000) {
+    rejectionReasons.push(`Market Cap troppo basso (< $45k: $${formatUsd(fdv)}) — Sotto la soglia di sopravvivenza / bonding curve`);
+  }
+  if (fdv > 15000000) {
+    rejectionReasons.push(`Market Cap troppo alto (> $15M: $${formatUsd(fdv)}) — Fuori dal range microcap Schelling trenches ($45k-$15M)`);
+  }
+
+  // Massimo 72 ore (3 giorni): rispetta il New Coin Bias di GCR (evita token pieni di bagholder intrappolati)
+  if (ageMinutes > 4320) {
+    rejectionReasons.push(`Età > 72h (${Math.round(ageMinutes / 60)}h) — Fuori dalla finestra New Coin Bias GCR`);
   }
 
   // Blacklist Piattaforme Tossiche: bags-fm, meteora e meteora-dbc hanno un tasso di rug del 90-100%
@@ -624,18 +632,45 @@ function evaluateDegenSniperPipeline(token) {
   // =========================================================================
   let score = 35;
 
-  // 1. FRESHNESS SCORE (< 15m = massimo boost)
-  if (ageMinutes <= 12) {
+  // 1. FRESHNESS & EXPANSION WAVE (GCR New Coin Bias: <72h)
+  if (ageMinutes <= 60) {
     score += 25;
-    signals.push(`🔥 Super Fresh Trench (${ageMinutes}m fa • Blocco Iniziale)`);
-  } else if (ageMinutes <= 25) {
-    score += 18;
-    signals.push(`⚡ Trench Wave (${ageMinutes}m fa)`);
-  } else if (ageMinutes <= 40) {
-    score += 10;
-    signals.push(`⏱️ Early Trench (${ageMinutes}m fa)`);
+    signals.push(`🔥 Early Expansion (<1h fa • New Coin Bias massimo)`);
+  } else if (ageMinutes <= 360) {
+    score += 20;
+    signals.push(`⚡ Breakout Wave (${(ageMinutes / 60).toFixed(1)}h fa • Price Discovery)`);
+  } else if (ageMinutes <= 1440) {
+    score += 14;
+    signals.push(`⏱️ Day 1 Runner (${(ageMinutes / 60).toFixed(1)}h fa • Struttura attiva)`);
+  } else if (ageMinutes <= 4320) {
+    score += 8;
+    signals.push(`⏳ Established Runner (${(ageMinutes / 60).toFixed(0)}h fa • <72h GCR Window)`);
   } else {
     score -= 10;
+  }
+
+  // 1.1 SCHELLING POINT TIER DETECTION ($45k - $15M)
+  let schellingTier = 'Schelling Trench';
+  if (fdv >= 45000 && fdv <= 150000) {
+    schellingTier = '🎓 $69k-$100k (Raydium Graduation Floor)';
+    score += 10;
+    signals.push(`🎯 Punto di Schelling: $69k-$100k (Sopravvivenza e Migrazione Raydium)`);
+  } else if (fdv > 150000 && fdv <= 700000) {
+    schellingTier = '🧱 $500k (Insider Shakeout & Prima Espansione)';
+    score += 8;
+    signals.push(`🎯 Punto di Schelling: ~$500k (Assorbimento dump primi sniper)`);
+  } else if (fdv > 700000 && fdv <= 2500000) {
+    schellingTier = '🚀 $1M (Whale Radar & Alpha Groups Threshold)';
+    score += 12;
+    signals.push(`🎯 Punto di Schelling: ~$1M (Linea psicologica di demarcazione Alpha)`);
+  } else if (fdv > 2500000 && fdv <= 7500000) {
+    schellingTier = '⚔️ $5M (Consolidamento Mid-Cap / Strongest Runner)';
+    score += 10;
+    signals.push(`🎯 Punto di Schelling: ~$5M (Selezione Leader assoluto della meta)`);
+  } else if (fdv > 7500000 && fdv <= 15000000) {
+    schellingTier = '👑 $10M-$15M (Escape Velocity / Pre-CEX Expansion)';
+    score += 14;
+    signals.push(`🎯 Punto di Schelling: $10M-$15M (Escape Velocity GCR / Liquidità per balene)`);
   }
 
   // 2. BUY/SELL RATIO VELOCITY (Target > 70%)
@@ -773,30 +808,31 @@ function evaluateDegenSniperPipeline(token) {
       verdictCode = 'ENTRY';
       primaryReason = `Golden Pocket Reversal: Dump ${dipDetails.maxDumpPct}%, Rimbalzo +${dipDetails.bouncePct}% dal min, Liq Drain solo ${dipDetails.liqDropPct}%, Buy Ratio ${buyRatio5m}%`;
       signals.unshift(`🎯 Golden Pocket Absorption (Dump ${dipDetails.maxDumpPct}% • Rimbalzo +${dipDetails.bouncePct}% • Liq intatta)`);
-    } else if ((score >= 75 && buyRatio5m >= 70 && ageMinutes <= 30) || (score >= 70 && sec && sec.smartMoneyCount > 0 && ageMinutes <= 30)) {
+    } else if ((score >= 75 && buyRatio5m >= 70 && ageMinutes <= 4320) || (score >= 70 && sec && sec.smartMoneyCount > 0 && ageMinutes <= 4320)) {
       strategyMode = 'BREAKOUT';
       score = Math.max(30, Math.min(99, Math.round(score)));
       verdict = '🚀 MOMENTUM BREAKOUT';
       verdictCode = 'ENTRY';
-      primaryReason = `Trench Velocity OK: ${ageMinutes}m fa, ${buyRatio5m}% Buys, Vol ~$${formatUsd(vol1mEst)}/m, ${smartMoneyText}`;
-    } else if (score >= 55 && buyRatio5m >= 60 && ageMinutes <= 45) {
+      primaryReason = `Momentum Reflexivity: ${ageMinutes <= 60 ? `${ageMinutes}m` : `${(ageMinutes/60).toFixed(1)}h`} fa, ${buyRatio5m}% Buys, Vol ~$${formatUsd(vol1mEst)}/m, ${schellingTier}`;
+    } else if (score >= 55 && buyRatio5m >= 60 && ageMinutes <= 4320) {
       strategyMode = 'SCALP';
       score = Math.max(30, Math.min(99, Math.round(score)));
       verdict = '⚡ FAST SCALP';
       verdictCode = 'SCALP';
-      primaryReason = `Scalp Momentum: ${ageMinutes}m fa, ${buyRatio5m}% Buys (${buys5m}B/${sells5m}S), Vol $${formatUsd(vol5m)}/5m`;
+      primaryReason = `Scalp Momentum: ${ageMinutes <= 60 ? `${ageMinutes}m` : `${(ageMinutes/60).toFixed(1)}h`} fa, ${buyRatio5m}% Buys (${buys5m}B/${sells5m}S), Vol $${formatUsd(vol5m)}/5m`;
     } else {
       strategyMode = 'WATCH';
       score = Math.max(30, Math.min(99, Math.round(score)));
       verdict = '🟡 TRENCH WATCH';
       verdictCode = 'WATCH';
-      primaryReason = `In osservazione: ${ageMinutes}m fa, ${buyRatio5m}% Buys, Vol $${formatUsd(vol5m)}/5m`;
+      primaryReason = `In osservazione: ${ageMinutes <= 60 ? `${ageMinutes}m` : `${(ageMinutes/60).toFixed(1)}h`} fa, ${buyRatio5m}% Buys, Vol $${formatUsd(vol5m)}/5m`;
     }
   }
 
   return {
-    category: 'DEGEN-TRENCH',
+    category: 'SCHELLING-TRENCH',
     strategyMode,
+    schellingTier,
     dipDetails,
     narrative,
     trajectory,
@@ -1611,16 +1647,17 @@ async function sendDiscordTokenAlert(token, isTest = false) {
     ? '**TP1:** +35% (Vende 40% • SL a pareggio)\n**TP2:** +85% (Vende 30% ATH Re-test • 30% Moon Bag)\n**Stop Loss:** **-14%** (Invalidazione floor dip)'
     : '**TP1:** +40% (Vende 40% • SL a pareggio)\n**TP2:** +100% (Vende 30% 2X • 30% Moon Bag)\n**Stop Loss:** **-18%** (Grace period 90s)';
 
+  const ageText = (token.ageMinutes || 1) < 60 ? `${token.ageMinutes || 1}m fa` : `${((token.ageMinutes || 1) / 60).toFixed(1)}h fa`;
   const embed = {
-    title: `${isTest ? '🧪 [TEST] ' : ''}${token.verdict} — ${token.symbol}${narrativeTag} (${token.ageMinutes || 1}m fa) • Score ${token.prePumpScore}/100`,
+    title: `${isTest ? '🧪 [TEST] ' : ''}${token.verdict} — ${token.symbol}${narrativeTag} (${ageText}) • Score ${token.prePumpScore}/100`,
     url: token.links?.bullx || token.links?.gmgn || `https://gmgn.ai/sol/token/${token.mint}`,
     color: embedColor,
     thumbnail: token.imageUrl ? { url: token.imageUrl } : undefined,
     description: `**Motivo:** ${token.primaryReason}`,
     fields: [
       {
-        name: '⏱️ Età & Launchpad',
-        value: `**Età:** **${token.ageMinutes} min fa**\n**Curva:** ${token.curveStatus || 'Raydium'}\n**FDV:** ${formatUsd(token.fdvUsd)} (Liq: ${formatUsd(token.liquidityUsd)})`,
+        name: '⏱️ Età & Schelling Point',
+        value: `**Età:** **${ageText}**\n**Schelling:** ${token.schellingTier || 'Microcap'}\n**FDV:** ${formatUsd(token.fdvUsd)} (Liq: ${formatUsd(token.liquidityUsd)})`,
         inline: true
       },
       {
@@ -1943,8 +1980,12 @@ async function scanSolanaFourPhases() {
   const symbolDedupeMap = new Map();
   for (const t of tokenMap.values()) {
     const ageMin = t.createdAt ? (Date.now() - t.createdAt) / 60000 : 0;
-    if (ageMin > 60 && t.createdAt) continue;
-    if (t.liquidityUsd < 20000 || t.fdvUsd < 20000) continue; // liquidità minima $20k per evitare trappole sub-dollaro e dev da pochi SOL
+    // Rispetta il New Coin Bias di GCR: esclude runner stantii con oltre 72 ore piene di bagholder
+    if (ageMin > 4320 && t.createdAt) continue;
+    if (t.liquidityUsd < 20000) continue; // liquidità minima $20k per evitare slippage letali
+
+    // Filtro Schelling Microcap & Small Cap ($45k - $15M)
+    if (t.fdvUsd < 45000 || t.fdvUsd > 15000000) continue;
 
     const symKey = (t.symbol || '').toUpperCase().trim();
     if (!symKey) continue;
@@ -1958,16 +1999,9 @@ async function scanSolanaFourPhases() {
 
   let allDiscovered = Array.from(symbolDedupeMap.values());
 
-  // Ordiniamo dando priorità assoluta a:
-  // 1) Token < 30 minuti di vita (finestra Degen Trench)
-  // 2) Volume Velocity 5m (attività esplosiva recente)
+  // GCR Rule: "The strong get stronger"
+  // Ordiniamo per Volume Velocity e Pressione di Flusso Recente (5m + 1h)
   allDiscovered.sort((a, b) => {
-    const ageA = a.createdAt ? (Date.now() - a.createdAt) / 60000 : 999;
-    const ageB = b.createdAt ? (Date.now() - b.createdAt) / 60000 : 999;
-    const isFreshA = ageA <= 30 ? 1 : 0;
-    const isFreshB = ageB <= 30 ? 1 : 0;
-    if (isFreshA !== isFreshB) return isFreshB - isFreshA;
-
     const volA = (a.volume?.m5 || 0) * 3 + (a.volume?.h1 || 0);
     const volB = (b.volume?.m5 || 0) * 3 + (b.volume?.h1 || 0);
     return volB - volA;
