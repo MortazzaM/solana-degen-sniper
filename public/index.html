@@ -149,9 +149,9 @@
         </div>
 
         <div class="bg-[#0c0f17] border border-cyan-500/30 rounded-xl p-3">
-          <div class="text-[11px] text-cyan-400 font-bold">💵 CASSA / BUDGET ($1,000 MAX)</div>
+          <div class="text-[11px] text-cyan-400 font-bold">💵 CASSA & SIZE (5% EQUITÀ)</div>
           <div id="pwAvailableCash" class="text-xl font-bold mono text-cyan-300 mt-0.5">$1,000.00</div>
-          <div id="pwBudgetStatusSub" class="text-[11px] text-slate-400 mono mt-0.5">Budget fresco: $1,000</div>
+          <div id="pwBudgetStatusSub" class="text-[11px] text-slate-400 mono mt-0.5">Size 5%: $50.00</div>
         </div>
 
         <div class="bg-[#0c0f17] border border-rose-500/40 rounded-xl p-3">
@@ -607,23 +607,22 @@
       document.getElementById('pwTotalTrades').textContent = paper.totalTrades || 0;
       document.getElementById('pwOpenClosedSub').textContent = `Investito: $${(paper.totalInvested || 0).toFixed(0)} (${paper.openTrades || 0} aperti)`;
 
-      // Cassa & Budget $1000
+      // Cassa & Size Dinamica 5%
       const availCash = paper.availableCashUsd !== undefined ? paper.availableCashUsd : 1000;
       const budgetLeft = paper.freshBudgetRemaining !== undefined ? paper.freshBudgetRemaining : 1000;
+      const dynTradeSize = paper.tradeSizeUsd !== undefined ? paper.tradeSizeUsd : 50;
       const cashEl = document.getElementById('pwAvailableCash');
       if (cashEl) {
-        const cashCls = availCash >= 25 ? 'text-cyan-300' : 'text-amber-400';
+        const cashCls = availCash >= dynTradeSize ? 'text-cyan-300' : 'text-amber-400';
         cashEl.className = `text-xl font-bold mono mt-0.5 ${cashCls}`;
         cashEl.textContent = `$${availCash.toFixed(2)}`;
       }
       const budgetSubEl = document.getElementById('pwBudgetStatusSub');
       if (budgetSubEl) {
-        if (budgetLeft > 0) {
-          budgetSubEl.textContent = `Budget fresco: $${budgetLeft.toFixed(0)} / $1,000`;
-        } else if (availCash >= 25) {
-          budgetSubEl.innerHTML = `<span class="text-emerald-400 font-semibold">🔄 Auto-Finanziato dai Gain</span>`;
+        if (availCash >= dynTradeSize) {
+          budgetSubEl.innerHTML = `<span class="text-cyan-400 font-medium">Size 5%: <b>$${dynTradeSize.toFixed(0)}</b></span> • Budget: $${budgetLeft.toFixed(0)}`;
         } else {
-          budgetSubEl.innerHTML = `<span class="text-rose-400 font-semibold">⏸ Cassa Esaurita (&lt; $25)</span>`;
+          budgetSubEl.innerHTML = `<span class="text-rose-400 font-semibold">⏸ Cassa &lt; Size 5% ($${dynTradeSize.toFixed(0)})</span>`;
         }
       }
 

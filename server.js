@@ -92,7 +92,8 @@ let discordConfig = {
 // Paper Wallet & Signal Tracker state
 let paperSignals = new Map();
 let paperSettings = {
-  tradeSizeUsd: 25, // $25 (o ~0.15 SOL) per evitare price impact e non fare da exit liquidity su micro-cap
+  tradeSizePct: 5, // Sizing dinamico: 5% del valore totale del portafoglio per trade
+  tradeSizeUsd: 50, // default iniziale (~$50 su $1000 di budget iniziale)
   initialBudgetUsd: 1000, // Tetto massimo iniziale di capitale fresco ($1000)
   minScoreAuto: 75, // Alzato a 75 per filtrare solo segnali d'élite
   tp1Pct: 40, // TP1 a +40% (vende il 40% e sposta lo SL a breakeven)
@@ -124,7 +125,7 @@ try {
       }
     }
     if (raw.settings) {
-      paperSettings = { ...paperSettings, ...raw.settings };
+      paperSettings = { ...paperSettings, ...raw.settings, tradeSizePct: 5 };
     }
   }
 } catch {}
@@ -903,7 +904,9 @@ function recordPaperSignal(token, isManual = false) {
 
   const entryPrice = token.priceUsd;
   const entryMcap = token.fdvUsd || token.marketCapUsd || 0;
-  const tradeSizeUsd = paperSettings.tradeSizeUsd || 100;
+  // Sizing Dinamico al momento dell'entrata: Esattamente il 5% del valore totale del portafoglio (minimo $10)
+  const currentSummary = computePaperSummary();
+  const tradeSizeUsd = currentSummary.tradeSizeUsd || Math.max(10, Math.round(Number(paperSettings.initialBudgetUsd || 1000) * 0.05));
 
   const entryRecord = {
     mint: token.mint,
@@ -1314,7 +1317,7 @@ async function sendDiscordTradeEvent(sig, fromState, toState) {
   const ev = eventConfigs[toState];
   if (!ev) return;
 
-  const tradeSize = sig.tradeSizeUsd || 25;
+  const tradeSize = sig.tradeSizeUsd || 50;
   const embed = {
     title: ev.title,
     url: sig.links?.gmgn || `https://gmgn.ai/sol/token/${sig.mint}`,
@@ -1323,7 +1326,7 @@ async function sendDiscordTradeEvent(sig, fromState, toState) {
     description: ev.desc,
     fields: [
       {
-        name: `💰 Esito Posizione ($${tradeSize})`,
+        name: `💰 Esito Posizione ($${tradeSize.toFixed(2)} • 5% Portfolio)`,
         value: `**Valore Netto:** $${sig.scalpValueUsd.toFixed(2)} (${sig.scalpPnlPct >= 0 ? '+' : ''}${sig.scalpPnlPct.toFixed(1)}%)\n**Fee/Slip Totali:** -$${sig.feesPaidUsd.toFixed(2)}`,
         inline: true
       },
@@ -1411,8 +1414,8 @@ async function sendHourlyPerformanceReport(isManualTrigger = false) {
     description: `Riepilogo automatico delle prestazioni Degen Sniper netti di tutte le fee reali (Bot 2%, DEX 0.6%, Priority Gas $0.40/tx e Slippage).`,
     fields: [
       {
-        name: '📈 Portafoglio Netto Reale ($100/trade)',
-        value: `**Investito:** $${totalInvested.toFixed(2)}\n**Valore Attuale:** $${scalpVal.toFixed(2)} (**+${scalpPnlPct.toFixed(1)}%**)\n**Profitto Netto:** +$${scalpPnl.toFixed(2)}\n**Fee/Gas Pagati:** -$${totalFees.toFixed(2)}`,
+        name: '📈 Portafoglio Netto Reale (5% Sizing per Trade)',
+        value: `**Investito Totale:** $${totalInvested.toFixed(2)}\n**Valore Attuale:** $${scalpVal.toFixed(2)} (**+${scalpPnlPct.toFixed(1)}%**)\n**Size Dinamica (5%):** $${(summary.tradeSizeUsd || 50).toFixed(2)}\n**Profitto Netto:** +$${scalpPnl.toFixed(2)}\n**Fee/Gas Pagati:** -$${totalFees.toFixed(2)}`,
         inline: false
       },
       {
@@ -1546,7 +1549,12 @@ function computePaperSummary() {
   const bestTrade = list.reduce((best, s) => (!best || (s.maxGainPct || 0) > (best.maxGainPct || 0) ? s : best), null);
 
   const initialBudgetUsd = Number(paperSettings.initialBudgetUsd || 1000);
-  const tradeSizeUsd = Number(paperSettings.tradeSizeUsd || 25);
+  const tradeSizePct = Number(paperSettings.tradeSizePct || 5);
+  // Portafoglio complessivo = Budget iniziale + Profitto Netto Scalp Reale (chiuso + aperto)
+  const totalPortfolioEquity = Math.max(50, Number((initialBudgetUsd + scalpPnlUsd).toFixed(2)));
+  // Sizing Dinamico: Esattamente il 5% dell'equità totale del portafoglio (minimo $10 per sostenere fee e gas)
+  const tradeSizeUsd = Math.max(10, Number(((totalPortfolioEquity * tradeSizePct) / 100).toFixed(2)));
+  paperSettings.tradeSizeUsd = tradeSizeUsd;
 
   // Calcolo Cassa e Capitale:
   // - Open Cost: tradeSizeUsd * numero di posizioni aperte
@@ -1556,24 +1564,12 @@ function computePaperSummary() {
   const realizedCashCollected = list.reduce((acc, s) => acc + (s.realizedUsd || 0), 0);
   
   // Capitale fresco iniziale consumato (non può superare initialBudgetUsd)
-  // Per ogni trade aperto, attinge prima dal budget iniziale fino a $1000; poi usa i profitti realizzati in cassa
-  const freshBudgetUsed = Math.min(initialBudgetUsd, totalTrades * tradeSizeUsd);
+  const freshBudgetUsed = Math.min(initialBudgetUsd, totalInvested);
   const freshBudgetRemaining = Math.max(0, initialBudgetUsd - freshBudgetUsed);
   
-  // Cassa totale liquida spendibile per nuovi trade = Budget fresco rimasto + Realizzato incassato - Capitale bloccato
-  // In alternativa più chiara: Cassa Attuale Disponibile = initialBudgetUsd + Profitto Netto Realizzato - Capitale Aperto
-  const realizedNetProfit = list.reduce((acc, s) => {
-    if (s.status === 'CLOSED') {
-      return acc + (s.scalpPnlUsd || 0);
-    } else {
-      // Per quelli aperti, ha incassato realizedUsd ma ha in ballo tradeSizeUsd
-      return acc + (s.realizedUsd || 0) - (s.tradeSizeUsd || tradeSizeUsd) * (1 - (s.remainingWeight ?? 1));
-    }
-  }, 0);
-
   // Saldo Cassa Disponibile per fare nuovi trade:
-  const availableCashUsd = Math.max(0, initialBudgetUsd - totalInvested + list.reduce((acc, s) => acc + (s.realizedUsd || 0), 0));
-  const canOpenNewTrade = availableCashUsd >= tradeSizeUsd;
+  const availableCashUsd = Math.max(0, Number((initialBudgetUsd - totalInvested + realizedCashCollected).toFixed(2)));
+  const canOpenNewTrade = availableCashUsd >= Math.min(tradeSizeUsd, 15);
 
   // Confronto Strategie Dual-Mode (Breakout vs Dip Absorption Reversal)
   const breakoutTrades = list.filter(s => (s.strategyMode || 'BREAKOUT') === 'BREAKOUT');
@@ -1608,6 +1604,10 @@ function computePaperSummary() {
     openTrades: openPositions.length,
     closedTrades: list.filter(s => s.status === 'CLOSED').length,
     initialBudgetUsd,
+    totalPortfolioEquity,
+    tradeSizePct,
+    tradeSizeUsd,
+    openCapitalLocked: Number(openCapitalLocked.toFixed(2)),
     totalInvested: Number(totalInvested.toFixed(2)),
     availableCashUsd: Number(availableCashUsd.toFixed(2)),
     canOpenNewTrade,
@@ -1643,9 +1643,11 @@ async function sendDiscordTokenAlert(token, isTest = false) {
   const embedColor = isReversal ? 0x10b981 : (token.verdictCode === 'ENTRY' ? 0xff0055 : 0xf59e0b);
   const narrativeTag = token.narrative?.tag ? ` [${token.narrative.tag}]` : '';
 
+  const curSummary = computePaperSummary();
+  const dynamicSize = curSummary.tradeSizeUsd || 50;
   const ladderText = isReversal
-    ? '**TP1:** +35% (Vende 40% • SL a pareggio)\n**TP2:** +85% (Vende 30% ATH Re-test • 30% Moon Bag)\n**Stop Loss:** **-14%** (Invalidazione floor dip)'
-    : '**TP1:** +40% (Vende 40% • SL a pareggio)\n**TP2:** +100% (Vende 30% 2X • 30% Moon Bag)\n**Stop Loss:** **-18%** (Grace period 90s)';
+    ? `**Size:** 5% Portafoglio (~$${dynamicSize.toFixed(0)})\n**TP1:** +35% (Vende 40% • SL a pareggio)\n**TP2:** +85% (Vende 30% ATH Re-test • 30% Moon Bag)\n**Stop Loss:** **-14%** (Invalidazione floor dip)`
+    : `**Size:** 5% Portafoglio (~$${dynamicSize.toFixed(0)})\n**TP1:** +40% (Vende 40% • SL a pareggio)\n**TP2:** +100% (Vende 30% 2X • 30% Moon Bag)\n**Stop Loss:** **-18%** (Grace period 90s)`;
 
   const ageText = (token.ageMinutes || 1) < 60 ? `${token.ageMinutes || 1}m fa` : `${((token.ageMinutes || 1) / 60).toFixed(1)}h fa`;
   const embed = {
